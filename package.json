@@ -1,0 +1,19 @@
+{
+  "name": "extra-fs",
+  "version": "0.0.1",
+  "description": "Works?",
+  "main": "index.js",
+  "scripts": {
+    "test": "exit"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nodef/extra-fs.git"
+  },
+  "author": "wolfram77@gmail.com",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/nodef/extra-fs/issues"
+  },
+  "homepage": "https://github.com/nodef/extra-fs#readme"
+}
