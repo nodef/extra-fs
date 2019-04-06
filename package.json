@@ -1,7 +1,7 @@
 {
   "name": "extra-fs",
-  "version": "0.0.1",
-  "description": "Works?",
+  "version": "0.0.2",
+  "description": "Support methods and Promise interface for fs module.",
   "main": "index.js",
   "scripts": {
     "test": "exit"
@@ -11,7 +11,7 @@
     "url": "git+https://github.com/nodef/extra-fs.git"
   },
   "author": "wolfram77@gmail.com",
-  "license": "MIT",
+  "license": "BSD-3-Clause",
   "bugs": {
     "url": "https://github.com/nodef/extra-fs/issues"
   },
