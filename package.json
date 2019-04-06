@@ -1,6 +1,6 @@
 {
   "name": "extra-fs",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Support methods and Promise interface for fs module.",
   "main": "index.js",
   "scripts": {
