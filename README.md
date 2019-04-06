@@ -27,8 +27,11 @@ const fs = require('extra-fs');
 // : includes all functions of "fs-extra"
 
 
-fs.dehuskDir(dir);
--> Promise
+fs.dehuskDir(dir, depth=-1);
+-> Promise <seed dir>
+
+fs.dehuskDirSync(dir, depth=-1);
+-> seed dir
 ```
 
 
