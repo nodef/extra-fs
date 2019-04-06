@@ -32,6 +32,8 @@ fs.dehuskDir(dir);
 ```
 
 
+<object data="https://merferry.glitch.me/card/extra-fs.svg"></object>
+
 [![nodef](https://merferry.glitch.me/card/extra-fs.svg)](https://nodef.github.io)
 
 [fs module]: https://nodejs.org/api/fs.html
