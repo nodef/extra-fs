@@ -1,6 +1,6 @@
 {
   "name": "extra-fs",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Support methods and Promise interface for fs module.",
   "main": "index.js",
   "scripts": {
@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/nodef/extra-fs/issues"
   },
-  "homepage": "https://github.com/nodef/extra-fs#readme"
+  "homepage": "https://github.com/nodef/extra-fs#readme",
+  "dependencies": {
+    "fs-extra": "^7.0.1"
+  }
 }
