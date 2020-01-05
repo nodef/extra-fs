@@ -6,66 +6,96 @@ const WIN32 = os.platform()==='win32';
 const PATHSEP = WIN32? ';':':';
 const PATHS = (E['PATH']||'').split(PATHSEP);
 const PATHEXT = (E['PATHEXT']||'').toLowerCase();
+const WHICHOPT = {
+  cwd: process.cwd(),
+  paths: PATHS,
+  platform: os.platform(),  
+  exefn: null,
+  progfn: null,
+};
 
 
-function which(prog) {
-  return new Promise((fres, frej) => _which(prog, fres));
-}
 
-// Locate single executable file.
-function whichStrSync(prog) {
-  for(var p of PATHS) {
-    var entries = fs.readdirSync(p, {withFileTypes: true});
-    for(var e of entries) {
-      if(!e.isFile()) continue;
-      var base = path.basename(e.name);
-      var ext = path.extname(e.name);
-      var name = base.substr(0, base.length-ext.length); 
-      if(prog!==name) continue;
-      var full = path.join(p, e.name);
-      if(isExe(full, null)) return [full];
-    }
-  }
-  return [];
-}
-
-// Locate multiple executable files.
-function whichRegSync(prog) {
-}
-
-function _which(prog, fn) {
-  var map = new Map();
-  var ps = PATH.split(PATHSEP);
-  for(var i=0, j=0, I=ps.length; i<I; i++) {
-    whichDir(prog, ps[i], map, err => {
-      if(++j>=I) fn(Array.from(map.values()));
+/**
+ * Locates executable path of programs (asynchronous).
+ * @param {string|RegExp|function} prog program name to look for
+ * @param {object?} opt options {cwd, paths, platform}
+ * @param {function?} fn callback (err, ans)
+ * @returns {Promise<Map>} map of {program -> executable path}
+ */
+function which(prog, opt, fn) {
+  fn = fn||typeof opt==='function'? opt:null;
+  opt = typeof opt==='object'? opt:null;
+  var o = whichOptions(prog, opt);
+  return new Promise((fres, frej) => {
+    _which(o.paths, o.progfn, o.exefn, new Map(), (err, ans) => {
+      if(fn) fn(err, ans);
+      return err? frej(err):fres(ans);
     });
-  }
-}
-function whichDir(prog, dir, map, fn) {
-  var isExe = WIN32? isExeWin32:isExeNix;
-  fs.readdir(dir, {withFileTypes: true}, (err, files) => {
-    if(err) return fn(err);
-    for(var f of files) {
-      if(!f.isFile()) continue;
-      var base = path.basename(f.name);
-      var p = path.join(dir, f.name);
-      var p0 = map.get(base)||null;
-      if(!prog.test(base)) continue;
-      if(isExe(p, p0)) map.set(base, p);
-    }
-    fn(null);
   });
 }
-function isExeWin32(p1, p0) {
-  var i0 = PATHEXT.indexOf(path.extname(p0||'f.zzz').toLowerCase());
-  var i1 = PATHEXT.indexOf(path.extname(p1).toLowerCase());
-  return i1>=0 && (i0<0 || i1<i0);
+function _which(paths, isProg, isExe, ans, fn) {
+  var reads = new Array(paths.length).fill(null);
+  for(var i=0, j=0, I=paths.length; i<I; i++) (i => {
+    fs.readdir(paths[i], {withFileTypes: true}, (err, entries) => {
+      if(err) fn(err, null);
+      reads[i] = entries;
+      for(; j<I && reads[j]!==null; j++)
+        whichEntries(paths[j], reads[j], isProg, isExe, ans);
+      if(j>=I) fn(null, ans);
+    });
+  })(i);
 }
-function isExeNix(p1) {
-  return path.extname(p1)==='';
+
+/**
+ * Locates executable path of programs (synchronous).
+ * @param {string|RegExp|function} prog program name to look for
+ * @param {object?} opt options {cwd, paths, platform}
+ * @returns {Map} map of {program -> executable path}
+ */
+function whichSync(prog, opt) {
+  var o = whichOptions(prog, opt);
+  return _whichSync(o.paths, o.progfn, o.exefn, new Map());
 }
-var isExe = WIN32? isExeWin32:isExeNix;
+function _whichSync(paths, isProg, isExe, ans) {
+  for(var p of paths) {
+    var entries = fs.readdirSync(p, {withFileTypes: true});
+    whichEntries(p, entries, isProg, isExe, ans);
+  }
+  return ans;
+}
+
+function whichOptions(prog, opt) {
+  var o = Object.assign({}, WHICHOPT, opt);
+  o.paths = o.paths||[o.cwd, ...PATHS];
+  o.exefn = o.exefn||o.platform==='win32'? isExeWin32:isExeNix;
+  if(typeof prog==='function') o.progfn = prog;
+  if(typeof prog==='string') o.progfn = name => name===prog;
+  o.progfn = name => prog.test(name);
+  return o;
+}
+function whichEntries(dir, entries, isProg, isExe, ans) {
+  var prios = new Map();
+  for(var e of entries) {
+    if(!e.isFile()) continue;
+    var base = path.basename(e.name);
+    var ext = path.extname(e.name);
+    var name = base.substr(0, base.length-ext.length); 
+    var full = path.join(dir, e.name);
+    var prio = isExe(full);
+    if(prio<0 || prio>=(prios.get(name)||PRIO_MAX)) continue;
+    if(!isProg(name)) continue;
+    ans.set(name, full);
+    prios.set(prio);
+  }
+}
+function isExeWin32(p) {
+  return PATHEXT.indexOf(path.extname(p).toLowerCase());
+}
+function isExeNix(p) {
+  return path.extname(p)===''? 0:-1;
+}
+
 
 
 function dehuskDirSync(dir, depth=-1) {
@@ -95,6 +125,8 @@ async function dehuskDir(dir, depth=-1) {
   await fs.move(temp, dir);
   return seed;
 }
+fs.which = which;
+fs.whichSync = whichSync;
 fs.dehuskDirSync = dehuskDirSync;
 fs.dehuskDir = dehuskDir;
 module.exports = fs;
