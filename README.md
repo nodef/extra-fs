@@ -17,6 +17,13 @@ Methods:
 | [which]             | Locates executable path of programs (asynchronous).
 | [whichSync]         | Locates executable path of programs (synchronous).
 
+<br>
+<br>
+
+## references
+
+- [Linux Commands](https://www.geeksforgeeks.org/linux-commands/)
+
 
 [![nodef](https://merferry.glitch.me/card/extra-fs.svg)](https://nodef.github.io)
 
