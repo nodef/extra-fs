@@ -1,7 +1,7 @@
 {
   "name": "extra-fs",
-  "version": "1.2.7",
-  "description": "Support methods and Promise interface for fs module.",
+  "version": "1.2.8",
+  "description": "Useful additions to inbuilt fs module.",
   "main": "index.js",
   "scripts": {
     "test": "exit"
@@ -19,14 +19,9 @@
   "keywords": [
     "extra",
     "fs",
-    "support",
-    "method",
     "promise",
-    "interface",
-    "module",
-    "dehusk",
-    "dir",
-    "sync",
+    "dehuskdir",
+    "which",
     "merferry"
   ],
   "dependencies": {

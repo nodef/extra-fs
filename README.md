@@ -1,4 +1,4 @@
-Support methods and Promise interface for [fs module].
+Useful additions to inbuilt [fs module].
 
 ```javascript
 const fs = require('extra-fs');
