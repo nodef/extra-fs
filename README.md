@@ -1,40 +1,27 @@
 Support methods and Promise interface for [fs module].
-> Need to remove the extra outer directory after extracting zip?<br>
-
-```javascript
-const fs = require('extra-fs');
-
-
-// BEFORE:
-// /home/user/app
-//   - app-master
-//     - package.json
-//     - README.md
-
-await fs.dehuskDir('/home/user/app');
-// AFTER:
-// /home/user/app
-//   - package.json
-//   - README.md
-```
-<br>
-
-
-## reference
 
 ```javascript
 const fs = require('extra-fs');
 // : includes all functions of "fs-extra"
-
-
-fs.dehuskDir(dir, depth=-1);
--> Promise <seed dir>
-
-fs.dehuskDirSync(dir, depth=-1);
--> seed dir
+// fs.which(program, [options], [callback])
+// fs.whichSync(program, [options])
+// ...
 ```
+
+Methods:
+
+| Name                | Action
+|---------------------|-------
+| [dehuskDir]         | Removes extra outer directories, say after extracting zip (asynchronous).
+| [dehuskDirSync]     | Removes extra outer directories, say after extracting zip (synchronous).
+| [which]             | Locates executable path of programs (asynchronous).
+| [whichSync]         | Locates executable path of programs (synchronous).
 
 
 [![nodef](https://merferry.glitch.me/card/extra-fs.svg)](https://nodef.github.io)
 
 [fs module]: https://nodejs.org/api/fs.html
+[dehuskDir]: https://github.com/nodef/extra-fs/wiki/dehuskDir
+[dehuskDirSync]: https://github.com/nodef/extra-fs/wiki/dehuskDirSync
+[which]: https://github.com/nodef/extra-fs/wiki/which
+[whichSync]: https://github.com/nodef/extra-fs/wiki/whichSync
