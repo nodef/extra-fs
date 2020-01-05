@@ -2,15 +2,37 @@ const fs = require('fs-extra');
 const path = require('path');
 const os = require('os');
 
-const PATH = E['PATH']||'';
-const PATHEXT = (E['PATHEXT']||'').toLowerCase();
 const WIN32 = os.platform()==='win32';
 const PATHSEP = WIN32? ';':':';
+const PATHS = (E['PATH']||'').split(PATHSEP);
+const PATHEXT = (E['PATHEXT']||'').toLowerCase();
 
 
 function which(prog) {
   return new Promise((fres, frej) => _which(prog, fres));
 }
+
+// Locate single executable file.
+function whichStrSync(prog) {
+  for(var p of PATHS) {
+    var entries = fs.readdirSync(p, {withFileTypes: true});
+    for(var e of entries) {
+      if(!e.isFile()) continue;
+      var base = path.basename(e.name);
+      var ext = path.extname(e.name);
+      var name = base.substr(0, base.length-ext.length); 
+      if(prog!==name) continue;
+      var full = path.join(p, e.name);
+      if(isExe(full, null)) return [full];
+    }
+  }
+  return [];
+}
+
+// Locate multiple executable files.
+function whichRegSync(prog) {
+}
+
 function _which(prog, fn) {
   var map = new Map();
   var ps = PATH.split(PATHSEP);
@@ -43,6 +65,7 @@ function isExeWin32(p1, p0) {
 function isExeNix(p1) {
   return path.extname(p1)==='';
 }
+var isExe = WIN32? isExeWin32:isExeNix;
 
 
 function dehuskDirSync(dir, depth=-1) {
