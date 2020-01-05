@@ -2,6 +2,7 @@ const fs = require('fs-extra');
 const path = require('path');
 const os = require('os');
 
+const E = process.env;
 const WIN32 = os.platform()==='win32';
 const PATHSEP = WIN32? ';':':';
 const PATHS = (E['PATH']||'').split(PATHSEP);
@@ -70,8 +71,8 @@ function whichOptions(prog, opt) {
   o.paths = o.paths||[o.cwd, ...PATHS];
   o.exefn = o.exefn||o.platform==='win32'? isExeWin32:isExeNix;
   if(typeof prog==='function') o.progfn = prog;
-  if(typeof prog==='string') o.progfn = name => name===prog;
-  o.progfn = name => prog.test(name);
+  else if(typeof prog==='string') o.progfn = name => name===prog;
+  else o.progfn = name => prog.test(name);
   return o;
 }
 function whichEntries(dir, entries, isProg, isExe, ans) {
@@ -83,14 +84,14 @@ function whichEntries(dir, entries, isProg, isExe, ans) {
     var name = base.substr(0, base.length-ext.length); 
     var full = path.join(dir, e.name);
     var prio = isExe(full);
-    if(prio<0 || prio>=(prios.get(name)||PRIO_MAX)) continue;
+    if(prio<0 || prio>=(prios.get(name)||1024)) continue;
     if(!isProg(name)) continue;
     ans.set(name, full);
     prios.set(prio);
   }
 }
 function isExeWin32(p) {
-  return PATHEXT.indexOf(path.extname(p).toLowerCase());
+  return PATHEXT.indexOf(path.extname(p).toLowerCase()||'.zzz');
 }
 function isExeNix(p) {
   return path.extname(p)===''? 0:-1;
