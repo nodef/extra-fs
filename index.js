@@ -39,8 +39,7 @@ function _which(paths, isProg, isExe, ans, fn) {
   var reads = new Array(paths.length).fill(null);
   for(var i=0, j=0, I=paths.length; i<I; i++) (i => {
     fs.readdir(paths[i], {withFileTypes: true}, (err, entries) => {
-      if(err) fn(err, null);
-      reads[i] = entries;
+      reads[i] = err? []:entries;
       for(; j<I && reads[j]!==null; j++)
         whichEntries(paths[j], reads[j], isProg, isExe, ans);
       if(j>=I) fn(null, ans);
@@ -59,10 +58,10 @@ function whichSync(prog, opt) {
   return _whichSync(o.paths, o.progfn, o.exefn, new Map());
 }
 function _whichSync(paths, isProg, isExe, ans) {
-  for(var p of paths) {
+  for(var p of paths) { try {
     var entries = fs.readdirSync(p, {withFileTypes: true});
     whichEntries(p, entries, isProg, isExe, ans);
-  }
+  } catch (e) {}}
   return ans;
 }
 
