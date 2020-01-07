@@ -2,6 +2,7 @@ const fs = require('fs-extra');
 const path = require('path');
 const os = require('os');
 
+// Global variables
 const E = process.env;
 const WIN32 = os.platform()==='win32';
 const PATHSEP = WIN32? ';':':';
@@ -98,6 +99,40 @@ function isExeNix(p) {
 
 
 
+/**
+ * Removes extra outer directories, say after extracting zip (asynchronous).
+ * @param {string} dir outermost directory
+ * @param {number?} depth max. extra directories to remove (default -1 => unlimited)
+ * @param {function?} fn callback function (error, seed_directory)
+ * @returns {Promise<string>} seed directory
+ */
+function dehuskDir(dir, depth, fn) {
+  fn = fn||(typeof depth==='function'? depth:null);
+  depth = typeof depth==='number'? depth:-1;
+  return _dehuskDir(dir, depth).then(seed => {
+    if(fn) fn(null, seed);
+  }, err => { fn(err, null); throw err; });
+}
+async function _dehuskDir(dir, depth=-1) {
+  for(var seed=dir; depth; depth--) {
+    var ents = await fs.readdir(seed, {withFileTypes: true});
+    if(ents.length===0 || ents.length>1 || ents[0].isFile()) break;
+    seed = path.join(seed, ents[0].name);
+  }
+  if(seed===dir) return seed;
+  var temp = dir+Math.random();
+  await fs.move(seed, temp);
+  await fs.remove(dir);
+  await fs.move(temp, dir);
+  return seed;
+}
+
+/**
+ * Removes extra outer directories, say after extracting zip (synchronous).
+ * @param {string} dir outermost directory
+ * @param {number?} depth max. extra directories to remove (default -1 => unlimited)
+ * @returns {string} seed directory
+ */
 function dehuskDirSync(dir, depth=-1) {
   for(var seed=dir; depth; depth--) {
     var ents = fs.readdirSync(seed, {withFileTypes: true});
@@ -109,20 +144,6 @@ function dehuskDirSync(dir, depth=-1) {
   fs.moveSync(seed, temp);
   fs.removeSync(dir);
   fs.moveSync(temp, dir);
-  return seed;
-}
-
-async function dehuskDir(dir, depth=-1) {
-  for(var seed=dir; depth; depth--) {
-    var ents = await fs.readdir(seed, {withFileTypes: true});
-    if(ents.length===0 || ents.length>1 || ents[0].isFile()) break;
-    seed = path.join(seed, ents[0].name);
-  }
-  if(seed===dir) return seed;
-  var temp = dir+Math.random();
-  await fs.move(seed, temp);
-  await fs.remove(dir);
-  await fs.move(temp, dir);
   return seed;
 }
 fs.which = which;
