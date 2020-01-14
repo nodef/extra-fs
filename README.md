@@ -51,5 +51,5 @@ Methods:
 [dehuskDirSync]: https://github.com/nodef/extra-fs/wiki/dehuskDirSync
 [which]: https://github.com/nodef/extra-fs/wiki/which
 [whichSync]: https://github.com/nodef/extra-fs/wiki/whichSync
-[ewhich]: https://github.com/nodef/extra-fs/blob/master/dehuskDir.md
+[edehuskdir]: https://github.com/nodef/extra-fs/blob/master/dehuskDir.md
 [ewhich]: https://github.com/nodef/extra-fs/blob/master/which.md
