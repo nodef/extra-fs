@@ -1,5 +1,18 @@
 Useful additions to inbuilt [fs module].
 
+## console
+
+Programs:
+
+| Name                | Action
+|---------------------|-------
+| [ewhich]            | Locates executable path of programs.
+
+<br>
+<br>
+
+## javascript
+
 ```javascript
 const fs = require('extra-fs');
 // : includes all functions of "fs-extra"
@@ -24,6 +37,8 @@ Methods:
 
 - [Linux Commands](https://www.geeksforgeeks.org/linux-commands/)
 - [fs-extra](https://www.npmjs.com/package/fs-extra)
+- [which](https://www.npmjs.com/package/which)
+- [RegExr](https://regexr.com)
 
 <br>
 <br>
@@ -35,3 +50,4 @@ Methods:
 [dehuskDirSync]: https://github.com/nodef/extra-fs/wiki/dehuskDirSync
 [which]: https://github.com/nodef/extra-fs/wiki/which
 [whichSync]: https://github.com/nodef/extra-fs/wiki/whichSync
+[ewhich]: https://github.com/nodef/extra-fs/blob/master/which.md
