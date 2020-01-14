@@ -61,38 +61,46 @@ function walkBfsSync(dirs, filter, depth, ans) {
 }
 
 function walkDfs(dir, filter, depth, ans, fn) {
-  if(depth===0) return fn(ans);
+  if(depth===0) return fn(null, ans);
   fs.readdir(dir, {withFileTypes: true}, (err, entries) => {
-    walkStep(dir, filter, depth, ans, entries, walkDfs, null);
-    fn(ans);
+    if(err) return fn(err);
+    var dirs = walkStep(dir, filter, depth, ans, entries, null, walkDfs, (err, ans) => {
+      if(err) return fn(err);
+      console.log('a', dirs, ans.length);
+      if(--dirs<=0) return fn(null, ans);
+    });
   });
 }
 
 function walkDfsSync(dir, filter, depth, ans) {
   if(depth===0) return ans;
-  for(var e of fs.readdirSync(dir, {withFileTypes: true})) {
-    var p = path.join(dir, e.name); 
-    var v = {path: p, entry: e};
-    if(!filter(v)) continue;
-    ans.push(v);
-    if(!e.isDirectory()) continue;
-    walkDfsSync(p, filter, depth-1, ans);
-  }
+  var entries = fs.readdirSync(dir, {withFileTypes: true});
+  walkStep(dir, filter, depth, ans, entries, null, walkDfsSync, null);
   return ans;
 }
 
-function walkStep(dir, filter, depth, ans, nextfn, entries, subdirs) {
+function walkStep(dir, filter, depth, ans, entries, subdirs, nextfn, fn) {
+  var dirs = 0;
   for(var e of entries) {
     var p = path.join(dir, e.name);
     var v = {path: p, entry: e};
     if(!filter(v)) continue;
     ans.push(v);
-    if(!e.directory()) continue;
+    if(!e.isDirectory()) continue;
     if(subdirs) subdirs.push(p);
-    else nextfn(p, filter, depth-1, ans, nextfn);
+    else nextfn(p, filter, depth-1, ans, fn);
+    dirs++;
   }
+  return dirs;
 }
 
+
+function main() {
+  var ans = walkDfsSync(process.cwd(), () => true, 2, []);
+  console.log(ans.length);
+  walkDfs(process.cwd(), () => true, 2, [], (err, ans) => console.log(ans.length));
+}
+main();
 
 
 /**
