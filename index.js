@@ -4,6 +4,12 @@ const os = require('os');
 
 // Global variables
 const E = process.env;
+const WALKOPT = {
+  root: process.cwd(),
+  traversal: 'bfs',
+  depth: -1,
+  filter: null,
+};
 const WIN32 = os.platform()==='win32';
 const PATHSEP = WIN32? ';':':';
 const PATHS = (E['PATH']||'').split(PATHSEP);
@@ -15,6 +21,77 @@ const WHICHOPT = {
   exefn: null,
   progfn: null,
 };
+
+
+
+
+
+/**
+ * Walk entries within a root directory (synchronously).
+ * @param {RegExp|function} ent entry to traverse
+ * @param {object?} opt options {root, traversal, depth}
+ */
+function walkSync(ent, opt) {
+  var o = walkOptions(ent, opt);
+  if(o.traversal==='bfs') return walkBfsSync([o.root], o.filter, o.depth, []);
+  else return walkDfsSync(o.root, o.filter, o.depth, []);
+}
+
+function walkOptions(ent, opt) {
+  var o = Object.assign({}, WALKOPT, opt);
+  if(typeof ent==='function') o.filter = ent;
+  else o.filter = e => ({path, entry}) => ent.test(path);
+  return o;
+}
+
+function walkBfsSync(dirs, filter, depth, ans) {
+  if(depth===0 || dirs.length===0) return ans;
+  var subdirs = [];
+  for(var dir of dirs) {
+    for(var e of fs.readdirSync(dir, {withFileTypes: true})) {
+      var p = path.join(dir, e.name);
+      var v = {path: p, entry: e};
+      if(!filter(v)) continue;
+      ans.push(v);
+      if(!e.isDirectory()) continue;
+      subdirs.push(p);
+    }
+  }
+  return walkBfsSync(subdirs, filter, depth-1, ans);
+}
+
+function walkDfs(dir, filter, depth, ans, fn) {
+  if(depth===0) return fn(ans);
+  fs.readdir(dir, {withFileTypes: true}, (err, entries) => {
+    walkStep(dir, filter, depth, ans, entries, walkDfs, null);
+    fn(ans);
+  });
+}
+
+function walkDfsSync(dir, filter, depth, ans) {
+  if(depth===0) return ans;
+  for(var e of fs.readdirSync(dir, {withFileTypes: true})) {
+    var p = path.join(dir, e.name); 
+    var v = {path: p, entry: e};
+    if(!filter(v)) continue;
+    ans.push(v);
+    if(!e.isDirectory()) continue;
+    walkDfsSync(p, filter, depth-1, ans);
+  }
+  return ans;
+}
+
+function walkStep(dir, filter, depth, ans, nextfn, entries, subdirs) {
+  for(var e of entries) {
+    var p = path.join(dir, e.name);
+    var v = {path: p, entry: e};
+    if(!filter(v)) continue;
+    ans.push(v);
+    if(!e.directory()) continue;
+    if(subdirs) subdirs.push(p);
+    else nextfn(p, filter, depth-1, ans, nextfn);
+  }
+}
 
 
 
