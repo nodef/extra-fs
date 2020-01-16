@@ -26,6 +26,20 @@ const WHICHOPT = {
 
 
 
+function findDfs(dir, filter, depth, ans, fn) {
+  if(depth===0) return fn(null, ans);
+  fs.readdir(dir, {withFileTypes: true}, (err, entries) => {
+    if(err) return fn(err);
+    for(var e of entries) {
+      var p = path.join(dir, e.name);
+      var v = {path: p, entry: e};
+      if(!filter(v)) continue;
+      ans.push([v]);
+      
+    }
+  });
+}
+
 /**
  * Walk entries within a root directory (synchronously).
  * @param {RegExp|function} ent entry to traverse
@@ -64,23 +78,35 @@ function walkDfs(dir, filter, depth, ans, fn) {
   if(depth===0) return fn(null, ans);
   fs.readdir(dir, {withFileTypes: true}, (err, entries) => {
     if(err) return fn(err);
-    var dirs = walkStep(dir, filter, depth, ans, entries, null, walkDfs, (err, ans) => {
-      if(err) return fn(err);
-      console.log('a', dirs, ans.length);
-      if(--dirs<=0) return fn(null, ans);
-    });
+    var i = entries.length;
+    for(var e of entries) {
+      var p = path.join(dir, e.name);
+      var v = {path: p, entry: e};
+      if(!filter(v)) continue;
+      ans.push([v]);
+      if(!e.isDirectory()) { --i; continue;}
+      var af = [];
+      ans.push(af);
+      walkDfs(p, filter, depth-1, af, (err) => {
+        if(err) return fn(err);
+        if(--i>0) return;
+        fn(null, ans.flat(Number.MAX_SAFE_INTEGER));
+      });
+    }
+    if(i>0)  return;
+    fn(null, ans.flat(Number.MAX_SAFE_INTEGER));
   });
 }
 
 function walkDfsSync(dir, filter, depth, ans) {
   if(depth===0) return ans;
   var entries = fs.readdirSync(dir, {withFileTypes: true});
-  walkStep(dir, filter, depth, ans, entries, null, walkDfsSync, null);
-  return ans;
+  return walkStep(dir, entries, filter, ans, null, dir => {
+    walkDfsSync(dir, filter, depth-1, ans);
+  });
 }
 
-function walkStep(dir, filter, depth, ans, entries, subdirs, nextfn, fn) {
-  var dirs = 0;
+function walkStep(dir, entries, filter, ans, subdirs, fn) {
   for(var e of entries) {
     var p = path.join(dir, e.name);
     var v = {path: p, entry: e};
@@ -88,17 +114,17 @@ function walkStep(dir, filter, depth, ans, entries, subdirs, nextfn, fn) {
     ans.push(v);
     if(!e.isDirectory()) continue;
     if(subdirs) subdirs.push(p);
-    else nextfn(p, filter, depth-1, ans, fn);
-    dirs++;
+    if(fn) fn(p);
   }
-  return dirs;
+  return ans;
 }
 
 
 function main() {
-  var ans = walkDfsSync(process.cwd(), () => true, 2, []);
-  console.log(ans.length);
-  walkDfs(process.cwd(), () => true, 2, [], (err, ans) => console.log(ans.length));
+  var depth = 2;
+  var ans = walkDfsSync(process.cwd(), () => true, depth, []);
+  console.log('ans.length', ans.length);
+  walkDfs(process.cwd(), () => true, depth, [], (err, ans) => console.log(ans.length));
 }
 main();
 
