@@ -133,33 +133,92 @@ main();
 
 
 
-function _remove(dir, filter, retries, delay, fn) {
+/**
+ * Removes matching files or directories (asynchronously).
+ * @param {string|RegExp|function} pth path to remove
+ * @param {object?} opt options {root, maxRetries, retryDelay}
+ * @param {function?} fn callback function (err)
+ * @returns {Promise} on completion
+ */
+function remove(pth, opt, fn) {
+  fn = fn||typeof opt==='function'? opt:null;
+  opt = typeof opt==='object'? opt:null;
+  var o = removeOptions(pth, opt);
+  return new Promise((fres, frej) => {
+    removeFilter(o.root, o.filter, o, err => {
+      if(fn) fn(err);
+      return err? frej(err):fres();
+    });
+  });
+}
+
+/**
+ * Removes matching files or directories (synchronously).
+ * @param {string|RegExp|function} pth path to remove
+ * @param {object?} opt options {root, maxRetries, retryDelay}
+ */
+function removeSync(pth, opt) {
+  var o = removeOptions(pth, opt);
+  removeFilterSync(o.root, o.filter, o);
+}
+
+function removeOptions(pth, opt) {
+  var o = Object.assign({}, REMOVEOPT, opt);
+  o.root = o.root||process.cwd();
+  if(typeof pth==='function') o.filter = pth;
+  else if(typeof pth==='string') o.filter = ({path, entry}) => path===pth;
+  else o.filter = ({path, entry}) => pth.test(path);
+  return o;
+}
+
+function removeFilter(pth, filter, opt, fn) {
+  fs.stat(pth, (err, s) => {
+    if(err) return fn(err);
+    if(s.isDirectory()) rmdirFilter(pth, filter, opt, fn);
+    else if(filter(v)) fs.unlink(pth, fn);
+  });
+}
+
+function removeFilterSync(pth, filter, opt) {
+  var s = fs.statSync(pth);
+  if(s.isDirectory()) rmdirFilterSync(pth, filter, opt);
+  else if(filter(v)) fs.unlinkSync(pth);
+}
+
+function rmdirFilter(dir, filter, opt, fn) {
+  var work = 0;
+  var done = err => {
+    if(err) { work = -1; if(work>0) fn(err); }
+    else if(work===0) fn(null);
+  };
   fs.readdir(dir, {withFileTypes: true}, (err, entries) => {
     if(err) return fn(err);
     for(var e of entries) {
       var p = path.join(dir, e.name);
       var v = {path: p, entry: e};
       if(filter(v)) {
-        i++;
-        
+        work++;
+        if(e.isFile()) fs.unlink(p, done);
+        else if(e.isDirectory()) fs.rmdir(p, opt, done);
+      }
+      else if(e.isDirectory()) {
+        work++;
+        rmdirFilter(p, filter, opt, done);
       }
     }
   });
 }
 
-function removeSync(pth, opt) {
-
-}
-function _removeSync(dir, filter, retries, delay) {
+function rmdirFilterSync(dir, filter, opt) {
   var entries = fs.readdirSync(dir, {withFileTypes: true});
   for(var e of entries) {
     var p = path.join(dir, e.name);
     var v = {path: p, entry: e};
     if(filter(v)) {
-      if(e.isFile()) removeFileSync(p, retries);
-      else if(e.isDirectory()) removeDirSync(p, retries, delay);
+      if(e.isFile()) fs.unlinkSync(p);
+      else if(e.isDirectory()) fs.rmdirSync(p, opt);
     }
-    else if(e.isDirectory()) removeSync(p, filter);
+    else if(e.isDirectory()) rmdirFilterSync(p, filter, opt);
   }
 }
 
@@ -295,6 +354,8 @@ function isExeNix(p) {
 }
 fs.dehuskDir = dehuskDir;
 fs.dehuskDirSync = dehuskDirSync;
+fs.remove = remove;
+fs.removeSync = removeSync;
 fs.which = which;
 fs.whichSync = whichSync;
 module.exports = fs;
