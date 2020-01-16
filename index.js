@@ -35,7 +35,7 @@ function findDfs(dir, filter, depth, ans, fn) {
       var v = {path: p, entry: e};
       if(!filter(v)) continue;
       ans.push([v]);
-      
+
     }
   });
 }
@@ -127,6 +127,42 @@ function main() {
   walkDfs(process.cwd(), () => true, depth, [], (err, ans) => console.log(ans.length));
 }
 main();
+
+
+
+
+
+
+function _remove(dir, filter, retries, delay, fn) {
+  fs.readdir(dir, {withFileTypes: true}, (err, entries) => {
+    if(err) return fn(err);
+    for(var e of entries) {
+      var p = path.join(dir, e.name);
+      var v = {path: p, entry: e};
+      if(filter(v)) {
+        i++;
+        
+      }
+    }
+  });
+}
+
+function removeSync(pth, opt) {
+
+}
+function _removeSync(dir, filter, retries, delay) {
+  var entries = fs.readdirSync(dir, {withFileTypes: true});
+  for(var e of entries) {
+    var p = path.join(dir, e.name);
+    var v = {path: p, entry: e};
+    if(filter(v)) {
+      if(e.isFile()) removeFileSync(p, retries);
+      else if(e.isDirectory()) removeDirSync(p, retries, delay);
+    }
+    else if(e.isDirectory()) removeSync(p, filter);
+  }
+}
+
 
 
 /**
