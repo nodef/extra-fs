@@ -1,11 +1,11 @@
 {
   "name": "extra-fs",
-  "version": "1.3.13",
+  "version": "1.3.14",
   "description": "Useful additions to inbuilt fs module.",
   "main": "index.js",
   "preferGlobal": true,
   "bin": {
-    "edehuskdir": "dehuskdir.js",
+    "edehuskdir": "dehuskDir.js",
     "ewhich": "which.js"
   },
   "scripts": {
