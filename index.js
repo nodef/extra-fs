@@ -120,19 +120,6 @@ function walkStep(dir, entries, filter, ans, subdirs, fn) {
 }
 
 
-function main() {
-  var depth = 2;
-  var ans = walkDfsSync(process.cwd(), () => true, depth, []);
-  console.log('ans.length', ans.length);
-  walkDfs(process.cwd(), () => true, depth, [], (err, ans) => console.log(ans.length));
-}
-main();
-
-
-
-
-
-
 /**
  * Removes matching files or directories (asynchronously).
  * @param {string|RegExp|function} pth path to remove
