@@ -1,6 +1,6 @@
 {
   "name": "extra-fs",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "Useful additions to inbuilt fs module.",
   "main": "index.js",
   "preferGlobal": true,
@@ -23,14 +23,9 @@
   "homepage": "https://github.com/nodef/extra-fs#readme",
   "keywords": [
     "extra",
-    "fs",
-    "promise",
-    "dehuskdir",
-    "which",
-    "merferry"
+    "fs"
   ],
-  "dependencies": {
-    "extra-boolean": "^1.1.1",
-    "fs-extra": "7"
+  "devDependencies": {
+    "extra-build": "^1.0.155"
   }
 }
