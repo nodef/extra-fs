@@ -4,3 +4,12 @@ https://www.npmjs.com/package/true-case-path (trueCase)
 https://www.npmjs.com/package/path-type (stat)
 https://www.npmjs.com/package/find-up
 https://www.npmjs.com/package/locate-path
+
+
+gentle-fs	fs	Gentle Filesystem operations
+firstline	fs	Async npm module for Node JS that reads the first line of a file
+node-disk-info	fs	Node module to get disk information in Windows, Linux & Mac. It works with Electron.
+ipfs-npm-replication-master	fs	Replicates the npm registry and puts it onto IPFS
+ipfs-npm-registry-mirror	fs	Serves tarballs and json manifests
+ipfs-registry-mirror-common	fs	Shared libraries & utilities from ipfs-npm
+os-file-stream-handler	fs	This module contains read/write and more advanced operations on files.
