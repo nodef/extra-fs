@@ -85,7 +85,7 @@ function whichEntries(dir, entries, isProg, isExe, ans) {
     if(prio<0 || prio>=(prios.get(name)||1024)) continue;
     if(!isProg(name)) continue;
     ans.set(name, full);
-    prios.set(prio);
+    prios.set(name, prio);
   }
 }
 function isExeWin32(p) {
