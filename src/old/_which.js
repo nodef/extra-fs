@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-const fs = require('./');
+const fs = require('.');
 const path = require('path');
 const cp = require('child_process');
 require('extra-boolean');

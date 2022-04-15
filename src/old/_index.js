@@ -17,7 +17,7 @@ const PATHEXT = (E['PATHEXT']||'').toLowerCase();
 const WHICHOPT = {
   cwd: process.cwd(),
   paths: PATHS,
-  platform: os.platform(),  
+  platform: os.platform(),
   exefn: null,
   progfn: null,
 };
