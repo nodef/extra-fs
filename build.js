@@ -12,7 +12,6 @@ const outdts = 'index.d.ts';
 
 
 
-
 // Is given file a submodule?
 function isSubmodule(pth) {
   if (/^_|index.ts$/.test(pth)) return false;
@@ -23,7 +22,7 @@ function isSubmodule(pth) {
 
 // Get filename keywords for main/sub package.
 function filenameKeywords(fil) {
-  if (fil !== srcts) return [path.keywordname(fil)];
+  if (fil !== srcts) return [path.symbolname(fil)];
   return fs.readdirSync('src').filter(isSubmodule).map(path.keywordname);
 }
 
@@ -31,8 +30,8 @@ function filenameKeywords(fil) {
 // Get export keywords for main/sub package.
 function exportKeywords(fil) {
   var txt  = fs.readFileTextSync(`src/${fil}`);
-  var exps = javascript.jsdocSymbols(txt).filter(s => s.export);
-  return exps.map(e => path.keywordname(e.name));
+  var exps = javascript.exportSymbols(txt);
+  return exps.map(e => path.symbolname(e.name));
 }
 
 
@@ -50,7 +49,6 @@ function updateGithub() {
   var {name, description} = m;
   var homepage  = `https://www.npmjs.com/package/${name}`;
   var topics    = keywords(srcts);
-  topics.length = Math.min(topics.length, 20);
   github.updateDetails(owner, name, {description, homepage, topics});
 }
 
@@ -109,14 +107,63 @@ function publishRoot(sym, ver) {
 }
 
 
+// Get sub package description.
+function subDescription(nam) {
+  if (!fs.existsSync(`wiki/${nam}.md`)) return '';
+  var txt = fs.readFileTextSync(`wiki/${nam}.md`);
+  return txt.replace(/\n[\s\S]*/g, '').replace(/<br>/g, '');
+}
+
+
+// Publish sub package to NPM, GitHub.
+function publishSub(nam, sym, ver) {
+  fs.restoreFileSync('package.json', () => {
+    var m    = package.read();
+    var desc = `${m.description.slice(0, -1)} {${nam}}.`;
+    m.name = `@${m.name}/${nam}`;
+    m.description = subDescription(nam) || desc;
+    m.version  = ver;
+    m.keywords = keywords(`${nam}.ts`);
+    if (sym) { m.name += '.web'; }
+    fs.restoreFileSync('README.md', () => {
+      var txt = fs.readFileTextSync('README.md');
+      if (sym) txt = txt.replace(/\[Files\]\((.*?)\/\)/g, '[Files]($1.web/)');
+      fs.writeFileTextSync('README.md', txt);
+      package.write('.', m);
+      package.publish('.');
+      package.publishGithub('.', owner);
+    });
+  });
+}
+
+
 // Deploy root package to NPM, GitHub.
 function deployRoot(ver) {
   var m   = package.read();
   var sym = path.symbolname(m.name);
   generateMain(srcts, '');
   publishRoot('', ver);
-  generateMain(srcts, sym);
-  publishRoot(sym, ver);
+  // generateMain(srcts, sym);
+  // publishRoot(sym, ver);
+}
+
+
+// Deploy sub package to NPM, GitHub.
+function deploySub(ver) {
+  var m = package.read();
+  for (var f of fs.readdirSync('src')) {
+    if (/^_|index\.ts/.test(f)) continue;
+    var nam = f.replace(/\..*/, '');
+    var sym = path.symbolname(`${m.name}-${nam}`);
+    fs.restoreFileSync('README.md', () => {
+      var md = `wiki/${nam}.md`;
+      if (fs.existsSync(md)) fs.copyFileSync(md, 'README.md');
+      generateMain(f, '');
+      publishSub(nam, '', ver);
+      // generateMain(f, sym);
+      // publishSub(nam, sym, ver);
+    });
+  }
 }
 
 
@@ -128,7 +175,7 @@ function deployAll() {
   updateGithub();
   publishDocs(srcts);
   deployRoot(ver);
-  // deploySub(ver);
+  deploySub(ver);
 }
 
 
@@ -234,7 +281,7 @@ function updateMarkdownIndex(rkind) {
         if (!dmap.has(e.name)) continue;
         if (!rkind.test(e.kind)) continue;
         var key  = `[${e.name}]`;
-        var val = jsdoc.parse(dmap.get(e.name).jsdoc).description.trim();
+        var val = jsdoc.parse(dmap.get(e.name).jsdoc).description.replace(/\n+/g, ' ').trim();
         if (!rmap.has(key)) rows.push([key, val]);
         else rows[rmap.get(key)][1] = val;
       }
