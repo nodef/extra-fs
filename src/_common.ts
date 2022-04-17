@@ -471,14 +471,3 @@ export function writeJsonAsync(path: string, json: any): Promise<void> {
 export function writeJsonSync(path: string, json: any): void {
   writeFileTextSync(path, JSON.stringify(json, null, 2) + "\n");
 }
-
-
-/**
- * Write object to JSON file.
- * @param path path of JSON file
- * @param json json value
- * @param fn callback (err)
- */
-export function writeJson(path: string, json: any, fn: NoParamCallback): void {
-  writeFileText(path, JSON.stringify(json, null, 2) + "\n", fn);
-}
