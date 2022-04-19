@@ -50,3 +50,6 @@ export {writeFileTextAsync as writeFileText} from "./_common";
 // JSON
 export {readJsonAsync  as readJson}  from "./_common";
 export {writeJsonAsync as writeJson} from "./_common";
+
+// DEHUSK
+export {dehuskdirAsync as dehuskdir} from "./_common";

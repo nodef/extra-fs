@@ -33,4 +33,8 @@ export {writeFileText}     from "./_common";
 export {readJsonSync}  from "./_common";
 export {readJson}      from "./_common";
 export {writeJsonSync} from "./_common";
-export {default as writeJson} from "./writeJson";
+export {writeJson}     from "./_common";
+
+// DEHUSK
+export {dehuskdirSync} from "./_common";
+export {dehuskdir}     from "./_common";
