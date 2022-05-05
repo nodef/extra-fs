@@ -1,6 +1,7 @@
 import {EOL}  from "os";
 import {join} from "path";
 import {PathLike, PathOrFileDescriptor} from "fs";
+import {Mode} from "fs";
 import {WriteFileOptions, WriteVResult} from "fs";
 import {CopyOptions, NoParamCallback} from "fs"
 import {constants as C} from "fs";
@@ -43,17 +44,17 @@ export {access as accessAsync} from "fs/promises";
 /**
  * Test a user's permissions for the file or directory.
  * @param path file or directory path
- * @param fn callback (err)
+ * @param callback callback (err)
  */
-export function access(path: PathLike, fn: NoParamCallback): void;
+export function access(path: PathLike, callback: NoParamCallback): void;
 
 /**
  * Test a user's permissions for the file or directory.
  * @param path file or directory path
  * @param mode accessibility checks (R_OK, W_OK, X_OK)
- * @param fn callback (err)
+ * @param callback callback (err)
  */
-export function access(path: PathLike, mode: number, fn: NoParamCallback): void;
+export function access(path: PathLike, mode: number, callback: NoParamCallback): void;
 
 /**
  * Test a user's permissions for the file or directory.
@@ -62,11 +63,85 @@ export function access(path: PathLike, mode: number, fn: NoParamCallback): void;
  */
 export function access(path: PathLike, mode?: number): Promise<void>;
 
-export function access(path: PathLike, mode?: number | NoParamCallback, fn?: NoParamCallback): void | Promise<void> {
-  if (typeof fn==="function") F.access(path, mode as number, fn);
+export function access(path: PathLike, mode?: number | NoParamCallback, callback?: NoParamCallback): void | Promise<void> {
+  if  (typeof callback==="function") F.access(path, mode as number, callback);
   else if (typeof mode==="function") F.access(path, mode);
   else if (typeof mode==="number") return P.access(path, mode);
   return P.access(path);
+}
+
+
+
+
+// APPEND-FILE
+// -----------
+
+// Append data to a file, creating the file if it does not yet exist.
+export {appendFileSync} from "fs";
+// Append data to a file, creating the file if it does not yet exist.
+export {appendFile as appendFileAsync} from "fs/promises";
+
+
+/**
+ * Append data to a file, creating the file if it does not yet exist.
+ * @param path filename or file descriptor
+ * @param data string or buffer data
+ * @param callback callback (err)
+ */
+export function appendFile(path: PathOrFileDescriptor, data: string | Uint8Array, callback: NoParamCallback): void;
+
+/**
+ * Append data to a file, creating the file if it does not yet exist.
+ * @param path filename or file descriptor
+ * @param data string or buffer data
+ * @param options write options {encoding, mode, flag}
+ * @param callback callback (err)
+ */
+export function appendFile(path: PathOrFileDescriptor, data: string | Uint8Array, options: WriteFileOptions, callback: NoParamCallback): void;
+
+/**
+ * Append data to a file, creating the file if it does not yet exist.
+ * @param path filename or file descriptor
+ * @param data string or buffer data
+ * @param options write options {encoding, mode, flag}
+ */
+export function appendFile(path: PathOrFileDescriptor, data: string | Uint8Array, options?: WriteFileOptions): Promise<void>;
+
+export function appendFile(...args: any[]): void | Promise<void> {
+  if (typeof args[args.length-1]==="function") F.appendFile.apply(null, args);
+  else return P.appendFile.apply(null, args);
+}
+
+
+
+
+// CHMOD
+// -----
+
+// Change the permissions of a file.
+export {chmodSync} from "fs";
+// Change the permissions of a file.
+export {chmod as chmodAsync} from "fs/promises";
+
+
+/**
+ * Change the permissions of a file.
+ * @param path filename
+ * @param mode file mode
+ * @param callback callback (err)
+ */
+export function chmod(path: PathLike, mode: Mode, callback: NoParamCallback): void;
+
+/**
+ * Change the permissions of a file.
+ * @param path filename
+ * @param mode file mode
+ */
+export function chmod(path: PathLike, mode: Mode): Promise<void>;
+
+export function chmod(...args: any[]): void | Promise<void> {
+  if (typeof args[args.length-1]==="function") F.chmod.apply(null, args);
+  else return P.chmod.apply(null, args);
 }
 
 
