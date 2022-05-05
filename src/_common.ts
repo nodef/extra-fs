@@ -1,5 +1,7 @@
 import {EOL}  from "os";
 import {join} from "path";
+import {PathLike, PathOrFileDescriptor} from "fs";
+import {WriteFileOptions, WriteVResult} from "fs";
 import {CopyOptions, NoParamCallback} from "fs"
 import {constants as C} from "fs";
 import * as F from "fs";
@@ -21,6 +23,172 @@ export class FsError extends Error implements NodeJS.ErrnoException {
     this.code = code;
     this.name = this.constructor.name;
   }
+}
+
+
+
+
+// BUILT-IN METHODS
+// ================
+
+// ACCESS
+// ------
+
+// Test a user's permissions for the file or directory.
+export {accessSync} from "fs";
+// Test a user's permissions for the file or directory.
+export {access as accessAsync} from "fs/promises";
+
+
+/**
+ * Test a user's permissions for the file or directory.
+ * @param path file or directory path
+ * @param fn callback (err)
+ */
+export function access(path: PathLike, fn: NoParamCallback): void;
+
+/**
+ * Test a user's permissions for the file or directory.
+ * @param path file or directory path
+ * @param mode accessibility checks (R_OK, W_OK, X_OK)
+ * @param fn callback (err)
+ */
+export function access(path: PathLike, mode: number, fn: NoParamCallback): void;
+
+/**
+ * Test a user's permissions for the file or directory.
+ * @param path file or directory path
+ * @param mode accessibility checks (R_OK, W_OK, X_OK)
+ */
+export function access(path: PathLike, mode?: number): Promise<void>;
+
+export function access(path: PathLike, mode?: number | NoParamCallback, fn?: NoParamCallback): void | Promise<void> {
+  if (typeof fn==="function") F.access(path, mode as number, fn);
+  else if (typeof mode==="function") F.access(path, mode);
+  else if (typeof mode==="number") return P.access(path, mode);
+  return P.access(path);
+}
+
+
+
+
+// WRITE
+// -----
+
+export {writeSync} from "fs";
+
+// function writeAsync(fd, buffer, offset, length, position, callback) {
+//   F.write()
+// }
+
+
+
+// WRITE-FILE
+// ----------
+
+// Write data to the file, replacing the file if it already exists.
+export {writeFileSync} from "fs";
+// Write data to the file, replacing the file if it already exists.
+export {writeFile as writeFileAsync} from "fs/promises";
+
+
+/**
+ * Write data to the file, replacing the file if it already exists.
+ * @param file filename or file descriptor
+ * @param data data to write
+ * @param fn callback (err)
+ */
+export function writeFile(file: PathOrFileDescriptor, data: string | NodeJS.ArrayBufferView, fn: NoParamCallback): void;
+
+/**
+ * Write data to the file, replacing the file if it already exists.
+ * @param file filename or file descriptor
+ * @param data data to write
+ * @param options options {encoding, mode, flag, signal}
+ * @param fn callback (err)
+ */
+export function writeFile(file: PathOrFileDescriptor, data: string | NodeJS.ArrayBufferView, options: WriteFileOptions, fn: NoParamCallback): void;
+
+/**
+ * Write data to the file, replacing the file if it already exists.
+ * @param file filename or file descriptor
+ * @param data data to write
+ * @param options options {encoding, mode, flag, signal}
+ */
+export function writeFile(file: PathLike, data: string | NodeJS.ArrayBufferView | Iterable<string | NodeJS.ArrayBufferView> | AsyncIterable<string | NodeJS.ArrayBufferView> | NodeJS.ReadableStream, options: WriteFileOptions, fn: NoParamCallback): Promise<void>;
+
+export function writeFile(file: PathOrFileDescriptor, data: string | NodeJS.ArrayBufferView, options?: WriteFileOptions | NoParamCallback, fn?: NoParamCallback): void | Promise<void> {
+  if (typeof fn==="function") F.writeFile(file, data, options as WriteFileOptions, fn);
+  else if (typeof options==="function") F.writeFile(file, data, options);
+  else return P.writeFile(file as PathLike, data, options);
+}
+
+
+
+
+// WRITEV
+// ------
+
+/**
+ * Get results of writev().
+ * @param err writev error
+ * @param bytesWritten the number of bytes written
+ * @param buffers a reference to the buffers input
+ */
+export type WriteVCallback = (err: NodeJS.ErrnoException, bytesWritten: number, buffers: NodeJS.ArrayBufferView[]) => void;
+
+
+// Write an array of buffers to the file.
+export {writevSync} from "fs";
+
+
+/**
+ * Write an array of buffers to the file.
+ * @param fd file descriptior
+ * @param buffers array of buffers
+ * @param position offset from begining of file [current position]
+ * @returns results {bytesWritten, buffers}
+ */
+export function writevAsync(fd: number, buffers: readonly NodeJS.ArrayBufferView[], position?: number): Promise<WriteVResult> {
+  return new Promise((resolve, reject) => {
+    F.writev(fd, buffers, position, (err, bytesWritten) => {
+      if (err) reject(err);
+      else resolve({bytesWritten, buffers: buffers as any});
+    });
+  });
+}
+
+
+/**
+ * Write an array of buffers to the file.
+ * @param fd file descriptior
+ * @param buffers array of buffers
+ * @param fn callback (err, bytesWritten, buffers)
+ */
+export function writev(fd: number, buffers: readonly NodeJS.ArrayBufferView[], fn: WriteVCallback): void;
+
+/**
+ * Write an array of buffers to the file.
+ * @param fd file descriptior
+ * @param buffers array of buffers
+ * @param position offset from begining of file [current position]
+ * @param fn callback (err, bytesWritten, buffers)
+ */
+export function writev(fd: number, buffers: readonly NodeJS.ArrayBufferView[], position: number, fn: WriteVCallback): void | Promise<WriteVResult>;
+
+/**
+ * Write an array of buffers to the file.
+ * @param fd file descriptior
+ * @param buffers array of buffers
+ * @param position offset from begining of file [current position]
+ * @returns results {bytesWritten, buffers}
+ */
+export function writev(fd: number, buffers: readonly NodeJS.ArrayBufferView[], position?: number): Promise<WriteVResult>;
+
+export function writev(fd: number, buffers: readonly NodeJS.ArrayBufferView[], position?: number | WriteVCallback, fn?: WriteVCallback): void | Promise<WriteVResult> {
+  if (typeof fn==="function") F.writev(fd, buffers, position as number, fn);
+  else if (typeof position==="function") F.writev(fd, buffers, position);
+  else return writevAsync(fd, buffers, position as number);
 }
 
 
@@ -57,10 +225,20 @@ export {existsSync} from "fs";
  * Check if file or directory exists.
  * @param path file or directory path
  * @param fn callback (err, exists)
+ */
+export function exists(path: string, fn: ExistsCallback): void;
+
+/**
+ * Check if file or directory exists.
+ * @param path file or directory path
  * @returns whether it exists
  */
-export function exists(path: string, fn: ExistsCallback): void {
-  existsAsync(path).then(a => fn(null, a), fn);
+export function exists(path: string): Promise<boolean>;
+
+export function exists(path: string, fn?: ExistsCallback): void | Promise<boolean> {
+  var p = existsAsync(path);
+  if (fn) p.then(a => fn(null, a), fn);
+  return p;
 }
 
 
@@ -160,6 +338,7 @@ export async function copyAsync(src: string, dest: string, options?: CopyOptions
   var o = options || {};
   var s = o.dereference? await P.stat(src) : await P.lstat(src);
   if (s.isFile()) {
+
     var mode = o.force && !o.errorOnExist? 0 : C.COPYFILE_EXCL;
     await P.copyFile(src, dest, mode);
   }
