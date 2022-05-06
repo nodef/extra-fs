@@ -223,6 +223,48 @@ export function close(...args: any[]): void | Promise<void> {
 
 
 
+// COPY-FILE
+// ---------
+
+// Copy source file to destination. By default, destination is overwritten if it already exists.
+export {copyFileSync} from "fs";
+// Copy source file to destination. By default, destination is overwritten if it already exists.
+export {copyFile as copyFileAsync} from "fs/promises";
+
+
+/**
+ * Copy source file to destination. By default, destination is overwritten if it already exists.
+ * @param src source filename to copy
+ * @param dest destination filename of the copy operation
+ * @param callback callback (err)
+ */
+export function copyFile(src: PathLike, dest: PathLike, callback: NoParamCallback): void;
+
+/**
+ * Copy source file to destination. By default, destination is overwritten if it already exists.
+ * @param src source filename to copy
+ * @param dest destination filename of the copy operation
+ * @param mode modifiers for copy operation
+ * @param callback callback (err)
+ */
+export function copyFile(src: PathLike, dest: PathLike, mode: number, callback: NoParamCallback): void;
+
+/**
+ * Copy source file to destination. By default, destination is overwritten if it already exists.
+ * @param src source filename to copy
+ * @param dest destination filename of the copy operation
+ * @param mode modifiers for copy operation
+ */
+export function copyFile(src: PathLike, dest: PathLike, mode?: number): Promise<void>;
+
+export function copyFile(...args: any[]): void | Promise<void> {
+  if (typeof args[args.length-1]==="function") F.copyFile.apply(null, args);
+  else return P.copyFile.apply(null, args);
+}
+
+
+
+
 // WRITE
 // -----
 
