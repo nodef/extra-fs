@@ -147,6 +147,82 @@ export function chmod(...args: any[]): void | Promise<void> {
 
 
 
+// CHOWN
+// -----
+
+// Change owner and group of a file.
+export {chownSync} from "fs";
+// Change owner and group of a file.
+export {chown as chownAsync} from "fs/promises";
+
+
+/**
+ * Change owner and group of a file.
+ * @param path filename
+ * @param uid user id
+ * @param gid group id
+ * @param callback callback (err)
+ */
+export function chown(path: PathLike, uid: number, gid: number, callback: NoParamCallback): void;
+
+/**
+ * Change owner and group of a file.
+ * @param path filename
+ * @param uid user id
+ * @param gid group id
+ */
+export function chown(path: PathLike, uid: number, gid: number): Promise<void>;
+
+export function chown(...args: any[]): void | Promise<void> {
+  if (typeof args[args.length-1]==="function") F.chown.apply(null, args);
+  else return P.chown.apply(null, args);
+}
+
+
+
+
+// CLOSE
+// -----
+
+// Close the file descriptor.
+export {closeSync} from "fs";
+
+
+/**
+ * Close the file descriptor.
+ * @param fd file descriptor
+ */
+ export function closeAsync(fd: number): Promise<void> {
+  return new Promise((resolve, reject) => {
+    F.close(fd, err => {
+      if (err) reject(err);
+      else resolve();
+    });
+  });
+}
+
+
+/**
+ * Close the file descriptor.
+ * @param fd file descriptor
+ * @param callback callback (err)
+ */
+export function close(fd: number, callback: NoParamCallback): void;
+
+/**
+ * Close the file descriptor.
+ * @param fd file descriptor
+ */
+export function close(fd: number): Promise<void>;
+
+export function close(...args: any[]): void | Promise<void> {
+  if (typeof args[args.length-1]==="function") F.close.apply(null, args);
+  else return closeAsync.apply(null, args);
+}
+
+
+
+
 // WRITE
 // -----
 
