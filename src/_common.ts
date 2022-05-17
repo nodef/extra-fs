@@ -2,7 +2,8 @@ import {EOL}  from "os";
 import {join} from "path";
 import {PathLike, PathOrFileDescriptor, TimeLike} from "fs";
 import {Mode, Stats, BigIntStats, StatOptions} from "fs";
-import {MakeDirectoryOptions, EncodingOption} from "fs";
+import {MakeDirectoryOptions, EncodingOption, OpenMode} from "fs";
+import {OpenDirOptions, Dir, ReadAsyncOptions, ReadPosition, Dirent} from "fs";
 import {WriteFileOptions, WriteVResult} from "fs";
 import {CopyOptions, NoParamCallback} from "fs"
 import {constants as C} from "fs";
@@ -871,6 +872,299 @@ export function mkdtemp(prefix: string, options?: EncodingOption): Promise<strin
 export function mkdtemp(...args: any[]): void | Promise<string | undefined> {
   if (typeof args[args.length-1]==="function") F.mkdtemp.apply(null, args);
   else return P.mkdtemp.apply(null, args);
+}
+
+
+
+
+// OPEN
+// ----
+
+/**
+ * Get results of open().
+ * @param err error
+ * @param fd file descriptor
+ */
+export type OpenCallback = (err: NodeJS.ErrnoException, fd: number) => void;
+
+
+// Open a file.
+export {openSync} from "fs";
+// Open a file.
+export {open as openAsync} from "fs/promises";
+
+
+/**
+ * Open a file.
+ * @param path file path
+ * @param callback callback (err, fd)
+ */
+export function open(path: PathLike, callback: OpenCallback): void;
+
+/**
+ * Open a file.
+ * @param path file path
+ * @param flags open flags [r]
+ * @param callback callback (err, fd)
+ */
+export function open(path: PathLike, flags: OpenMode, callback: OpenCallback): void;
+
+/**
+ * Open a file.
+ * @param path file path
+ * @param flags open flags [r]
+ * @param mode set file mode (permission and sticky bits) [0o666 = RW]
+ * @param callback callback (err, fd)
+ */
+export function open(path: PathLike, flags: OpenMode, mode: Mode, callback: OpenCallback): void;
+
+/**
+ * Open a file.
+ * @param path file path
+ * @param flags open flags [r]
+ * @param mode set file mode (permission and sticky bits) [0o666 = RW]
+ */
+export function open(path: PathLike, flags?: OpenMode, mode?: Mode): Promise<string>;
+
+export function open(...args: any[]): void | Promise<string | undefined> {
+  if (typeof args[args.length-1]==="function") F.open.apply(null, args);
+  else return P.open.apply(null, args);
+}
+
+
+
+
+// OPENDIR
+// -------
+
+/**
+ * Get results of opendir().
+ * @param err error
+ * @param dir directory stream
+ */
+export type OpenDirCallback = (err: NodeJS.ErrnoException, dir: Dir) => void;
+
+
+// Open a directory.
+export {opendirSync} from "fs";
+// Open a directory.
+export {opendir as opendirAsync} from "fs/promises";
+
+
+/**
+ * Open a directory.
+ * @param path directory path
+ * @param callback callback (err, dir)
+ */
+export function opendir(path: PathLike, callback: OpenDirCallback): void;
+
+/**
+ * Open a directory.
+ * @param path directory path
+ * @param options opendir options {encoding, bufferSize}
+ * @param callback callback (err, dir)
+ */
+export function opendir(path: PathLike, options: OpenDirOptions, callback: OpenCallback): void;
+
+/**
+ * Open a directory.
+ * @param path directory path
+ * @param options opendir options {encoding, bufferSize}
+ * @returns directory stream
+ */
+export function opendir(path: PathLike, options?: OpenDirOptions): Promise<Dir>;
+
+export function opendir(...args: any[]): void | Promise<Dir> {
+  if (typeof args[args.length-1]==="function") F.open.apply(null, args);
+  else return P.open.apply(null, args);
+}
+
+
+
+
+// READ
+// ----
+
+export interface ReadResult {
+  /** Bytes read. */
+  bytesRead: number,
+  /** Output buffer. */
+  buffer: NodeJS.ArrayBufferView,
+}
+
+
+/**
+ * Get results of read().
+ * @param err error
+ * @param bytesRead bytes read
+ * @param buffer output buffer
+ */
+export type ReadCallback = (err: NodeJS.ErrnoException, bytesRead: number, buffer: NodeJS.ArrayBufferView) => void;
+
+
+// Read data from a file.
+export {readSync} from "fs";
+
+/**
+ * Read data from a file.
+ * @param fd file descriptor
+ * @param buffer output buffer [Buffer.alloc(16384)]
+ * @param offset buffer offset [0]
+ * @param length read length [buffer.length - offset]
+ * @param position file position [null]
+ */
+export function readAsync(fd: number, buffer: NodeJS.ArrayBufferView, offset: number, length: number, position: ReadPosition | null): Promise<ReadResult>;
+
+/**
+ * Read data from a file.
+ * @param fd file descriptor
+ * @param options read options {buffer, offset, length, position}
+ */
+export function readAsync<T extends NodeJS.ArrayBufferView>(fd: number, options?: ReadAsyncOptions<T>): Promise<ReadResult>;
+
+export function readAsync(...args: any[]): Promise<ReadResult> {
+  return new Promise((resolve, reject) => {
+    // @ts-ignore
+    F.read(...args, (err: NodeJS.ErrnoException, bytesRead: number, buffer: NodeJS.ArrayBufferView) => {
+      if (err) reject(err);
+      else resolve({bytesRead, buffer});
+    });
+  });
+}
+
+
+/**
+ * Read data from a file.
+ * @param fd directory path
+ * @param callback callback (err, dir)
+ */
+export function read(fd: number, callback: ReadCallback): void;
+
+/**
+ * Read data from a file.
+ * @param fd directory path
+ * @param buffer output buffer [Buffer.alloc(16384)]
+ * @param callback callback (err, dir)
+ */
+export function read(fd: number, buffer: NodeJS.ArrayBufferView, callback: ReadCallback): void;
+
+/**
+ * Read data from a file.
+ * @param fd directory path
+ * @param buffer output buffer [Buffer.alloc(16384)]
+ * @param offset buffer offset [0]
+ * @param callback callback (err, dir)
+ */
+export function read(fd: number, buffer: NodeJS.ArrayBufferView, offset: number, callback: ReadCallback): void;
+
+/**
+ * Read data from a file.
+ * @param fd directory path
+ * @param buffer output buffer [Buffer.alloc(16384)]
+ * @param offset buffer offset [0]
+ * @param length read length [buffer.length - offset]
+ * @param callback callback (err, dir)
+ */
+export function read(fd: number, buffer: NodeJS.ArrayBufferView, offset: number, length: number, callback: ReadCallback): void;
+
+/**
+ * Read data from a file.
+ * @param fd directory path
+ * @param buffer output buffer [Buffer.alloc(16384)]
+ * @param offset buffer offset [0]
+ * @param length read length [buffer.length - offset]
+ * @param position file position [null]
+ * @param callback callback (err, dir)
+ */
+export function read(fd: number, buffer: NodeJS.ArrayBufferView, offset: number, length: number, position: ReadPosition | null, callback: ReadCallback): void;
+
+/**
+ * Read data from a file.
+ * @param path directory path
+ * @param options opendir options {encoding, bufferSize}
+ * @param callback callback (err, dir)
+ */
+export function read(path: PathLike, options: OpenDirOptions, callback: OpenCallback): void;
+
+
+/**
+ * Read data from a file.
+ * @param fd directory path
+ * @param buffer output buffer [Buffer.alloc(16384)]
+ * @param offset buffer offset [0]
+ * @param length read length [buffer.length - offset]
+ * @param position file position [null]
+ * @returns read data {bytesRead, buffer}
+ */
+export function read(fd: number, buffer?: NodeJS.ArrayBufferView, offset?: number, length?: number, position?: ReadPosition | null): Promise<ReadResult>;
+
+/**
+ * Read data from a file.
+ * @param path directory path
+ * @param options opendir options {encoding, bufferSize}
+ * @returns read data {bytesRead, buffer}
+ */
+export function read<T extends NodeJS.ArrayBufferView>(fd: number, options?: ReadAsyncOptions<T>): Promise<ReadResult>;
+
+export function read(...args: any[]): void | Promise<ReadResult> {
+  if (typeof args[args.length-1]==="function") F.read.apply(null, args);
+  else return readAsync.apply(null, args);
+}
+
+
+
+
+// READDIR
+// -------
+
+export type ReadDirOptions = BufferEncoding | {
+  /** Buffer encoding. */
+  encoding: BufferEncoding;
+  /** Return Dirent? */
+  withFileTypes?: false;
+};
+
+
+/**
+ * Get results of readdir().
+ * @param err error
+ * @param files contents of directory
+ */
+export type ReadDirCallback = (err: NodeJS.ErrnoException, files: string[] | NodeJS.ArrayBufferView[] | Dirent[]) => void;
+
+
+// Open a directory.
+export {readdirSync} from "fs";
+// Open a directory.
+export {readdir as readdirAsync} from "fs/promises";
+
+
+/**
+ * Open a directory.
+ * @param path directory path
+ * @param callback callback (err, dir)
+ */
+export function readdir(path: PathLike, callback: ReadDirCallback): void;
+
+/**
+ * Open a directory.
+ * @param path directory path
+ * @param options readdir options {encoding, withFileTypes}
+ * @param callback callback (err, dir)
+ */
+export function readdir(path: PathLike, options: ReadDirOptions, callback: OpenCallback): void;
+
+/**
+ * Open a directory.
+ * @param path directory path
+ * @param options readdir options {encoding, withFileTypes}
+ * @returns directory stream
+ */
+export function readdir(path: PathLike, options?: ReadDirOptions): Promise<string[] | NodeJS.ArrayBufferView[] | Dirent[]>;
+
+export function readdir(...args: any[]): void | Promise<string[] | NodeJS.ArrayBufferView[] | Dirent[]> {
+  if (typeof args[args.length-1]==="function") F.readdir.apply(null, args);
+  else return P.readdir.apply(null, args);
 }
 
 
