@@ -2,6 +2,7 @@ import {EOL}  from "os";
 import {join} from "path";
 import {PathLike, PathOrFileDescriptor, TimeLike} from "fs";
 import {Mode, Stats, BigIntStats, StatOptions} from "fs";
+import {MakeDirectoryOptions, EncodingOption} from "fs";
 import {WriteFileOptions, WriteVResult} from "fs";
 import {CopyOptions, NoParamCallback} from "fs"
 import {constants as C} from "fs";
@@ -454,7 +455,7 @@ export function fdatasync(...args: any[]): void | Promise<void> {
 // FSTAT
 // -----
 
-/** Get results of [f]stat*(). */
+/** Get results of [f]stat(). */
 export type StatCallback = (err: NodeJS.ErrnoException | null, stats: Stats | BigIntStats) => void;
 
 
@@ -551,7 +552,6 @@ export function fsync(...args: any[]): void | Promise<void> {
 
 // FTRUNCATE
 // ---------
-
 
 // Truncate the file (set length).
 export {ftruncateSync} from "fs";
@@ -655,22 +655,8 @@ export function futimes(...args: any[]): void | Promise<void> {
 
 // Set the owner of a symbolic link.
 export {lchownSync} from "fs";
-
-
-/**
- * Set the owner of a symbolic link.
- * @param path file descriptor
- * @param uid user id
- * @param gid group id
- */
-export function lchownAsync(path: PathLike, uid: number, gid: number): Promise<void> {
-  return new Promise((resolve, reject) => {
-    F.lchown(path, uid, gid, err => {
-      if (err) reject(err);
-      else resolve();
-    });
-  });
-}
+// Set the owner of a symbolic link.
+export {lchown as lchownAsync} from "fs/promises";
 
 
 /**
@@ -692,7 +678,7 @@ export function lchown(path: PathLike, uid: number, gid: number): Promise<void>;
 
 export function lchown(...args: any[]): void | Promise<void> {
   if (typeof args[args.length-1]==="function") F.lchown.apply(null, args);
-  else return lchownAsync.apply(null, args);
+  else return P.lchown.apply(null, args);
 }
 
 
@@ -703,21 +689,8 @@ export function lchown(...args: any[]): void | Promise<void> {
 
 // Create a hard link to a file or directory.
 export {linkSync} from "fs";
-
-
-/**
- * Create a hard link to a file or directory.
- * @param target existing path
- * @param link new path
- */
-export function linkAsync(target: PathLike, link: PathLike): Promise<void> {
-  return new Promise((resolve, reject) => {
-    F.link(target, link, err => {
-      if (err) reject(err);
-      else resolve();
-    });
-  });
-}
+// Create a hard link to a file or directory.
+export {link as linkAsync} from "fs/promises";
 
 
 /**
@@ -737,7 +710,7 @@ export function link(target: PathLike, link: PathLike): Promise<void>;
 
 export function link(...args: any[]): void | Promise<void> {
   if (typeof args[args.length-1]==="function") F.link.apply(null, args);
-  else return linkAsync.apply(null, args);
+  else return P.link.apply(null, args);
 }
 
 
@@ -748,21 +721,8 @@ export function link(...args: any[]): void | Promise<void> {
 
 // Get file status, without dereferencing symbolic links.
 export {lstatSync} from "fs";
-
-
-/**
- * Get file status, without dereferencing symbolic links.
- * @param path file path
- * @param options stat options
- */
-export function lstatAsync(path: PathLike, options?: StatOptions): Promise<Stats | BigIntStats> {
-  return new Promise((resolve, reject) => {
-    F.lstat(path, options, (err, stats) => {
-      if (err) reject(err);
-      else resolve(stats);
-    });
-  });
-}
+// Get file status, without dereferencing symbolic links.
+export {lstat as lstatAsync} from "fs/promises";
 
 
 /**
@@ -789,7 +749,7 @@ export function lstat(path: PathLike, options?: StatOptions): Promise<Stats | Bi
 
 export function lstat(...args: any[]): void | Promise<Stats | BigIntStats> {
   if (typeof args[args.length-1]==="function") F.lstat.apply(null, args);
-  else return lstatAsync.apply(null, args);
+  else return P.lstat.apply(null, args);
 }
 
 
@@ -800,22 +760,8 @@ export function lstat(...args: any[]): void | Promise<Stats | BigIntStats> {
 
 // Change the file system timestamps of a file, without dereferencing symbolic links.
 export {lutimesSync} from "fs";
-
-
-/**
- * Change the file system timestamps of a file, without dereferencing symbolic links.
- * @param path file path
- * @param atime last access time
- * @param mtime last modified time
- */
-export function lutimesAsync(path: PathLike, atime: TimeLike, mtime: TimeLike): Promise<void> {
-  return new Promise((resolve, reject) => {
-    F.lutimes(path, atime, mtime, err => {
-      if (err) reject(err);
-      else resolve();
-    });
-  });
-}
+// Change the file system timestamps of a file, without dereferencing symbolic links.
+export {lutimes as lutimesAsync} from "fs/promises";
 
 
 /**
@@ -837,7 +783,94 @@ export function lutimes(path: PathLike, atime: TimeLike, mtime: TimeLike): Promi
 
 export function lutimes(...args: any[]): void | Promise<void> {
   if (typeof args[args.length-1]==="function") F.lutimes.apply(null, args);
-  else return lutimesAsync.apply(null, args);
+  else return P.lutimes.apply(null, args);
+}
+
+
+
+
+// MKDIR
+// -----
+
+/**
+ * Get results of mkdir().
+ * @param err error
+ * @param path first directory path created (if any)
+ */
+export type MakeDirectoryCallback = (err: NodeJS.ErrnoException, path?: string) => void;
+
+
+// Create a directory.
+export {mkdirSync} from "fs";
+// Create a directory.
+export {mkdir as mkdirAsync} from "fs/promises";
+
+
+/**
+ * Create a directory.
+ * @param path directory path
+ * @param options make directory options
+ * @param callback callback (err, path?)
+ */
+export function mkdir(path: PathLike, options: MakeDirectoryOptions, callback: MakeDirectoryCallback): void;
+
+/**
+ * Create a directory.
+ * @param path directory path
+ * @param options make directory options
+ */
+export function mkdir(path: PathLike, options: MakeDirectoryOptions): Promise<string | undefined>;
+
+export function mkdir(...args: any[]): void | Promise<string | undefined> {
+  if (typeof args[args.length-1]==="function") F.mkdir.apply(null, args);
+  else return P.mkdir.apply(null, args);
+}
+
+
+
+
+// MKDTEMP
+// -------
+
+/**
+ * Get results of mkdtemp().
+ * @param err error
+ * @param path created directory path
+ */
+export type MakeDirectoryTemporaryCallback = (err: NodeJS.ErrnoException, path: string) => void;
+
+
+// Create a unique temporary directory.
+export {mkdtempSync} from "fs";
+// Create a unique temporary directory.
+export {mkdtemp as mkdtempAsync} from "fs/promises";
+
+
+/**
+ * Create a unique temporary directory.
+ * @param prefix directory prefix
+ * @param callback callback (err, path)
+ */
+export function mkdtemp(prefix: string, callback: MakeDirectoryTemporaryCallback): void;
+
+/**
+ * Create a unique temporary directory.
+ * @param prefix directory prefix
+ * @param options encoding options
+ * @param callback callback (err, path)
+ */
+export function mkdtemp(prefix: string, options: EncodingOption, callback: MakeDirectoryTemporaryCallback): void;
+
+/**
+ * Create a unique temporary directory.
+ * @param prefix directory prefix
+ * @param options encoding options
+ */
+export function mkdtemp(prefix: string, options?: EncodingOption): Promise<string>;
+
+export function mkdtemp(...args: any[]): void | Promise<string | undefined> {
+  if (typeof args[args.length-1]==="function") F.mkdtemp.apply(null, args);
+  else return P.mkdtemp.apply(null, args);
 }
 
 
