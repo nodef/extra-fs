@@ -4,6 +4,7 @@ import {PathLike, PathOrFileDescriptor, TimeLike} from "fs";
 import {Mode, Stats, BigIntStats, StatOptions} from "fs";
 import {MakeDirectoryOptions, EncodingOption, OpenMode} from "fs";
 import {OpenDirOptions, Dir, ReadAsyncOptions, ReadPosition, Dirent} from "fs";
+import {RmOptions, RmDirOptions} from "fs";
 import {WriteFileOptions, WriteVResult} from "fs";
 import {CopyOptions, NoParamCallback} from "fs"
 import {constants as C} from "fs";
@@ -759,14 +760,14 @@ export function lstat(...args: any[]): void | Promise<Stats | BigIntStats> {
 // LUTIMES
 // -------
 
-// Change the file system timestamps of a file, without dereferencing symbolic links.
+// Change the file system timestamps of an object.
 export {lutimesSync} from "fs";
-// Change the file system timestamps of a file, without dereferencing symbolic links.
+// Change the file system timestamps of an object.
 export {lutimes as lutimesAsync} from "fs/promises";
 
 
 /**
- * Change the file system timestamps of a file, without dereferencing symbolic links.
+ * Change the file system timestamps of an object.
  * @param path file path
  * @param atime last access time
  * @param mtime last modified time
@@ -775,7 +776,7 @@ export {lutimes as lutimesAsync} from "fs/promises";
 export function lutimes(path: PathLike, atime: TimeLike, mtime: TimeLike, callback: NoParamCallback): void;
 
 /**
- * Change the file system timestamps of a file, without dereferencing symbolic links.
+ * Change the file system timestamps of an object.
  * @param path file path
  * @param atime last access time
  * @param mtime last modified time
@@ -1170,14 +1171,575 @@ export function readdir(...args: any[]): void | Promise<string[] | NodeJS.ArrayB
 
 
 
+// READ-FILE
+// ---------
+
+/**
+ * Get results of readFile().
+ * @param err error
+ * @param data contents of file
+ */
+export type ReadFileCallback = (err: NodeJS.ErrnoException, data: string | Buffer) => void;
+
+
+// Read the entire contents of a file.
+export {readFileSync} from "fs";
+// Read the entire contents of a file.
+export {readFile as readFileAsync} from "fs/promises";
+
+
+/**
+ * Read the entire contents of a file.
+ * @param path directory path
+ * @param callback callback (err, data)
+ */
+export function readFile(path: PathOrFileDescriptor, callback: ReadFileCallback): void;
+
+/**
+ * Read the entire contents of a file.
+ * @param path directory path
+ * @param options read file options
+ * @param callback callback (err, data)
+ */
+export function readFile(path: PathOrFileDescriptor, options: any, callback: ReadFileCallback): void;
+
+/**
+ * Read the entire contents of a file.
+ * @param path directory path
+ * @param options read file options
+ * @returns contents of file
+ */
+export function readFile(path: PathOrFileDescriptor, options?: any): Promise<string | Buffer>;
+
+export function readFile(...args: any[]): void | Promise<string | Buffer> {
+  if (typeof args[args.length-1]==="function") F.readFile.apply(null, args);
+  else return P.readFile.apply(null, args);
+}
+
+
+
+
+// READLINK
+// --------
+
+export type ReadlinkCallback = (err: NodeJS.ErrnoException, linkString: string | Buffer) => void;
+
+// Read the contents of a symbolic link.
+export {readlinkSync} from "fs";
+// Read the contents of a symbolic link.
+export {readlink as readlinkAsync} from "fs/promises";
+
+
+/**
+ * Read the contents of a symbolic link.
+ * @param path path of symbolic link
+ * @param callback callback (err, linkString)
+ */
+export function readlink(path: PathLike, callback: RealpathCallback): void;
+
+/**
+ * Read the contents of a symbolic link.
+ * @param path path of symbolic link
+ * @param options encoding option
+ * @param callback callback (err, linkString)
+ */
+export function readlink(path: PathLike, options: EncodingOption, callback: RealpathCallback): void;
+
+/**
+ * Read the contents of a symbolic link.
+ * @param path path of symbolic link
+ * @param options encoding option
+ */
+export function readlink(path: PathLike, options?: EncodingOption): Promise<string | Buffer>;
+
+export function readlink(...args: any[]): void | Promise<string | Buffer> {
+  if (typeof args[args.length-1]==="function") F.readlink.apply(null, args);
+  else return P.readlink.apply(null, args);
+}
+
+
+
+
+// READV
+// -----
+
+// REALPATH
+// --------
+
+export type RealpathCallback = (err: NodeJS.ErrnoException, resolvedPath: string | Buffer) => void;
+
+// Compute the canonical pathname by resolving ., .. and symbolic links.
+export {realpathSync} from "fs";
+// Compute the canonical pathname by resolving ., .. and symbolic links.
+export {realpath as realpathAsync} from "fs/promises";
+
+
+/**
+ * Compute the canonical pathname by resolving ., .. and symbolic links.
+ * @param path directory to remove
+ * @param callback callback (err, resolvedPath)
+ */
+export function realpath(path: PathLike, callback: RealpathCallback): void;
+
+/**
+ * Compute the canonical pathname by resolving ., .. and symbolic links.
+ * @param path directory to remove
+ * @param options encoding option
+ * @param callback callback (err, resolvedPath)
+ */
+export function realpath(path: PathLike, options: EncodingOption, callback: RealpathCallback): void;
+
+/**
+ * Compute the canonical pathname by resolving ., .. and symbolic links.
+ * @param path directory to remove
+ * @param options encoding option
+ */
+export function realpath(path: PathLike, options?: EncodingOption): Promise<string | Buffer>;
+
+export function realpath(...args: any[]): void | Promise<string | Buffer> {
+  if (typeof args[args.length-1]==="function") F.realpath.apply(null, args);
+  else return P.realpath.apply(null, args);
+}
+
+
+
+
+// RENAME
+// ------
+
+// Rename/move a file or directory.
+export {renameSync} from "fs";
+// Rename/move a file or directory.
+export {rename as renameAsync} from "fs/promises";
+
+
+/**
+ * Rename/move a file or directory.
+ * @param src source path to rename
+ * @param dest destination path to rename to
+ * @param callback callback (err)
+ */
+export function rename(src: PathLike, dest: PathLike, callback: NoParamCallback): void;
+
+/**
+ * Rename/move a file or directory.
+ * @param src source filename to copy
+ * @param dest destination filename of the copy operation
+ */
+export function rename(src: PathLike, dest: PathLike): Promise<void>;
+
+export function rename(...args: any[]): void | Promise<void> {
+  if (typeof args[args.length-1]==="function") F.rename.apply(null, args);
+  else return P.rename.apply(null, args);
+}
+
+
+
+
+// RMDIR
+// -----
+
+// Remove a directory.
+export {rmdirSync} from "fs";
+// Remove a directory.
+export {rmdir as rmdirAsync} from "fs/promises";
+
+
+/**
+ * Remove a directory.
+ * @param path directory to remove
+ * @param callback callback (err)
+ */
+export function rmdir(path: PathLike, callback: NoParamCallback): void;
+
+/**
+ * Remove a directory.
+ * @param path directory to remove
+ * @param options rmdir options
+ * @param callback callback (err)
+ */
+export function rmdir(path: PathLike, options: RmDirOptions, callback: NoParamCallback): void;
+
+/**
+ * Remove a directory.
+ * @param path directory to remove
+ * @param options rmdir options
+ */
+export function rmdir(path: PathLike, options?: RmDirOptions): Promise<void>;
+
+export function rmdir(...args: any[]): void | Promise<void> {
+  if (typeof args[args.length-1]==="function") F.rm.apply(null, args);
+  else return P.rm.apply(null, args);
+}
+
+
+
+
+// RM
+// --
+
+// Remove a file or directory.
+export {rmSync} from "fs";
+// Remove a file or directory.
+export {rm as rmAsync} from "fs/promises";
+
+
+/**
+ * Remove a file or directory.
+ * @param path object to remove
+ * @param callback callback (err)
+ */
+export function rm(path: PathLike, callback: NoParamCallback): void;
+
+/**
+ * Remove a file or directory.
+ * @param path object to remove
+ * @param options rm options
+ * @param callback callback (err)
+ */
+export function rm(path: PathLike, options: RmOptions, callback: NoParamCallback): void;
+
+/**
+ * Remove a file or directory.
+ * @param path object to remove
+ * @param options rm options
+ */
+export function rm(path: PathLike, options?: RmOptions): Promise<void>;
+
+export function rm(...args: any[]): void | Promise<void> {
+  if (typeof args[args.length-1]==="function") F.rm.apply(null, args);
+  else return P.rm.apply(null, args);
+}
+
+
+
+
+// STAT
+// ----
+
+// Get file status.
+export {statSync} from "fs";
+// Get file status.
+export {stat as statAsync} from "fs/promises";
+
+
+/**
+ * Get file status.
+ * @param path file path
+ * @param callback callback (err, stats)
+ */
+export function stat(path: PathLike, callback: StatCallback): void;
+
+/**
+ * Get file status.
+ * @param path file path
+ * @param options stat options
+ * @param callback callback (err, stats)
+ */
+export function stat(path: PathLike, options: StatOptions, callback: StatCallback): void;
+
+/**
+ * Get file status.
+ * @param path file path
+ * @param options stat options
+ */
+export function stat(path: PathLike, options?: StatOptions): Promise<Stats | BigIntStats>;
+
+export function stat(...args: any[]): void | Promise<Stats | BigIntStats> {
+  if (typeof args[args.length-1]==="function") F.stat.apply(null, args);
+  else return P.stat.apply(null, args);
+}
+
+
+
+
+// SYMLINK
+// -------
+
+/** Symlink type (win32 only). */
+export type SymlinkType = "file" | "dir" | "junction";
+
+
+// Create a symbolic link pointing to a given target.
+export {symlinkSync} from "fs";
+// Create a symbolic link pointing to a given target.
+export {symlink as symlinkAsync} from "fs/promises";
+
+
+/**
+ * Create a symbolic link pointing to a given target.
+ * @param target target object path
+ * @param path symlink path
+ * @param callback callback (err)
+ */
+export function symlink(target: PathLike, path: PathLike, type: SymlinkType, callback: NoParamCallback): void;
+
+/**
+ * Create a symbolic link pointing to a given target.
+ * @param target target object path
+ * @param path symlink path
+ * @param type symlink type (dir, file, junction; win32 only)
+ * @param callback callback (err)
+ */
+export function symlink(target: PathLike, path: PathLike, type: SymlinkType, callback: NoParamCallback): void;
+
+/**
+ * Create a symbolic link pointing to a given target.
+ * @param target target object path
+ * @param path symlink path
+ * @param type symlink type (dir, file, junction; win32 only)
+ */
+export function symlink(target: PathLike, path: PathLike, type?: SymlinkType): Promise<void>;
+
+export function symlink(...args: any[]): void | Promise<void> {
+  if (typeof args[args.length-1]==="function") F.symlink.apply(null, args);
+  else return P.symlink.apply(null, args);
+}
+
+
+
+
+// TRUNCATE
+// --------
+
+// Shorten a file (truncate).
+export {truncateSync} from "fs";
+// Shorten a file (truncate).
+export {truncate as truncateAsync} from "fs/promises";
+
+
+/**
+ * Shorten a file (truncate).
+ * @param path file path
+ * @param callback callback (err)
+ */
+export function truncate(path: PathLike, callback: NoParamCallback): void;
+
+/**
+ * Shorten a file (truncate).
+ * @param path file path
+ * @param len maximum length of file
+ * @param callback callback (err)
+ */
+export function truncate(path: PathLike, len: number, callback: NoParamCallback): void;
+
+/**
+ * Shorten a file (truncate).
+ * @param path file path
+ * @param len maximum length of file [0]
+ */
+export function truncate(path: number, len?: number): Promise<void>;
+
+export function truncate(...args: any[]): void | Promise<void> {
+  if (typeof args[args.length-1]==="function") F.truncate.apply(null, args);
+  else return P.truncate.apply(null, args);
+}
+
+
+
+
+// UNLINK
+// ------
+
+// Remove a file or symbolic link.
+export {unlinkSync} from "fs";
+// Remove a file or symbolic link.
+export {unlink as unlinkAsync} from "fs/promises";
+
+
+/**
+ * Remove a file or symbolic link.
+ * @param path file path
+ * @param callback callback (err)
+ */
+export function unlink(path: PathLike, callback: NoParamCallback): void;
+
+/**
+ * Remove a file or symbolic link.
+ * @param path file path
+ */
+export function unlink(path: PathLike): Promise<void>;
+
+export function unlink(...args: any[]): void | Promise<void> {
+  if (typeof args[args.length-1]==="function") F.unlink.apply(null, args);
+  else return P.unlink.apply(null, args);
+}
+
+
+
+
+// UNWATCH-FILE
+// ------------
+
+// UTIMES
+// ------
+
+// Change the file system timestamps of an object.
+export {utimesSync} from "fs";
+// Change the file system timestamps of an object.
+export {utimes as utimesAsync} from "fs/promises";
+
+
+/**
+ * Change the file system timestamps of an object.
+ * @param path file path
+ * @param atime last access time
+ * @param mtime last modified time
+ * @param callback callback (err)
+ */
+export function utimes(path: PathLike, atime: TimeLike, mtime: TimeLike, callback: NoParamCallback): void;
+
+/**
+ * Change the file system timestamps of an object.
+ * @param path file path
+ * @param atime last access time
+ * @param mtime last modified time
+ */
+export function utimes(path: PathLike, atime: TimeLike, mtime: TimeLike): Promise<void>;
+
+export function utimes(...args: any[]): void | Promise<void> {
+  if (typeof args[args.length-1]==="function") F.utimes.apply(null, args);
+  else return P.utimes.apply(null, args);
+}
+
+
+
+
+// WATCH
+// -----
+
+// Watch for changes on file.
+export {watchFile} from "fs";
+// Stop watching for changes on file.
+export {unwatchFile} from "fs";
+// Watch for changes on file or directory.
+export {watch} from "fs";
+
+
+
+
 // WRITE
 // -----
 
+export interface WriteResult {
+  /** Bytes writtem. */
+  bytesWritten: number,
+  /** Input buffer. */
+  buffer: NodeJS.ArrayBufferView | string,
+}
+
+
+/**
+ * Get results of write().
+ * @param err error
+ * @param bytesWritten bytes written
+ * @param buffer input buffer
+ */
+export type WriteCallback = (err: NodeJS.ErrnoException, bytesWritten: number, buffer: NodeJS.ArrayBufferView | string) => void;
+
+
+// Write data to a file.
 export {writeSync} from "fs";
 
-// function writeAsync(fd, buffer, offset, length, position, callback) {
-//   F.write()
-// }
+
+/**
+ * Write data to a file.
+ * @param fd file descriptor
+ * @param buffer output buffer
+ * @param offset buffer offset [0]
+ * @param length read length [buffer.length - offset]
+ * @param position file position [null]
+ */
+export function writeAsync(fd: number, buffer: NodeJS.ArrayBufferView, offset?: number, length?: number, position?: ReadPosition | null): Promise<WriteResult>;
+
+/**
+ * Write data to a file.
+ * @param fd file descriptor
+ * @param options read options {buffer, offset, length, position}
+ */
+export function writeAsync(fd: number, buffer: string, position?: ReadPosition | null, encoding?: BufferEncoding): Promise<WriteResult>;
+
+export function writeAsync(...args: any[]): Promise<WriteResult> {
+  return new Promise((resolve, reject) => {
+    // @ts-ignore
+    F.read(...args, (err: NodeJS.ErrnoException, bytesWritten: number, buffer: NodeJS.ArrayBufferView | string) => {
+      if (err) reject(err);
+      else resolve({bytesWritten, buffer});
+    });
+  });
+}
+
+
+/**
+ * Write data to a file.
+ * @param fd directory path
+ * @param buffer output buffer
+ * @param callback callback (err, dir)
+ */
+export function write(fd: number, buffer: NodeJS.ArrayBufferView, callback: WriteCallback): void;
+
+/**
+ * Write data to a file.
+ * @param fd directory path
+ * @param buffer output buffer
+ * @param offset buffer offset [0]
+ * @param callback callback (err, dir)
+ */
+export function write(fd: number, buffer: NodeJS.ArrayBufferView, offset: number, callback: WriteCallback): void;
+
+/**
+ * Write data to a file.
+ * @param fd directory path
+ * @param buffer output buffer [Buffer.alloc(16384)]
+ * @param offset buffer offset [0]
+ * @param length read length [buffer.length - offset]
+ * @param callback callback (err, dir)
+ */
+export function write(fd: number, buffer: NodeJS.ArrayBufferView, offset: number, length: number, callback: WriteCallback): void;
+
+/**
+ * Write data to a file.
+ * @param fd directory path
+ * @param buffer output buffer [Buffer.alloc(16384)]
+ * @param offset buffer offset [0]
+ * @param length read length [buffer.length - offset]
+ * @param position file position [null]
+ * @param callback callback (err, dir)
+ */
+export function write(fd: number, buffer: NodeJS.ArrayBufferView, offset: number, length: number, position: ReadPosition | null, callback: WriteCallback): void;
+
+/**
+ * Write data to a file.
+ * @param fd directory path
+ * @param buffer output buffer [Buffer.alloc(16384)]
+ * @param callback callback (err, dir)
+ */
+export function write(fd: number, buffer: string, callback: WriteCallback): void;
+
+/**
+ * Write data to a file.
+ * @param fd directory path
+ * @param buffer output buffer [Buffer.alloc(16384)]
+ * @param offset buffer offset [0]
+ * @param callback callback (err, dir)
+ */
+export function write(fd: number, buffer: string, position: ReadPosition | null, callback: WriteCallback): void;
+
+/**
+ * Write data to a file.
+ * @param fd directory path
+ * @param buffer output buffer [Buffer.alloc(16384)]
+ * @param offset buffer offset [0]
+ * @param length read length [buffer.length - offset]
+ * @param callback callback (err, dir)
+ */
+export function write(fd: number, buffer: string, position: ReadPosition | null, encoding: BufferEncoding, callback: WriteCallback): void;
+
+export function write(...args: any[]): void | Promise<WriteResult> {
+  if (typeof args[args.length-1]==="function") F.write.apply(null, args);
+  else return writeAsync.apply(null, args);
+}
+
 
 
 
