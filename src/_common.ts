@@ -1,6 +1,6 @@
 import {EOL}  from "os";
 import {join} from "path";
-import {PathLike, PathOrFileDescriptor} from "fs";
+import {PathLike, PathOrFileDescriptor, TimeLike} from "fs";
 import {Mode, Stats, BigIntStats, StatOptions} from "fs";
 import {WriteFileOptions, WriteVResult} from "fs";
 import {CopyOptions, NoParamCallback} from "fs"
@@ -544,6 +544,155 @@ export function fsync(fd: number): Promise<void>;
 export function fsync(...args: any[]): void | Promise<void> {
   if (typeof args[args.length-1]==="function") F.fsync.apply(null, args);
   else return fsyncAsync.apply(null, args);
+}
+
+
+
+
+// FTRUNCATE
+// ---------
+
+
+// Truncate the file (set length).
+export {ftruncateSync} from "fs";
+
+
+/**
+ * Truncate the file (set length).
+ * @param fd file descriptor
+ * @param len maximum length of file [0]
+ */
+export function ftruncateAsync(fd: number, len?: number): Promise<void> {
+  return new Promise((resolve, reject) => {
+    F.ftruncate(fd, len, err => {
+      if (err) reject(err);
+      else resolve();
+    });
+  });
+}
+
+
+/**
+ * Truncate the file (set length).
+ * @param fd file descriptor
+ * @param callback callback (err)
+ */
+export function ftruncate(fd: number, callback: NoParamCallback): void;
+
+/**
+ * Truncate the file (set length).
+ * @param fd file descriptor
+ * @param len maximum length of file
+ * @param callback callback (err)
+ */
+export function ftruncate(fd: number, len: number, callback: NoParamCallback): void;
+
+/**
+ * Truncate the file (set length).
+ * @param fd file descriptor
+ * @param len maximum length of file [0]
+ */
+export function ftruncate(fd: number, len?: number): Promise<void>;
+
+export function ftruncate(...args: any[]): void | Promise<void> {
+  if (typeof args[args.length-1]==="function") F.ftruncate.apply(null, args);
+  else return ftruncateAsync.apply(null, args);
+}
+
+
+
+
+// FUTIMES
+// -------
+
+// Change the file system timestamps of a file.
+export {futimesSync} from "fs";
+
+
+/**
+ * Change the file system timestamps of a file.
+ * @param fd file descriptor
+ * @param atime last access time
+ * @param mtime last modified time
+ */
+export function futimesAsync(fd: number, atime: TimeLike, mtime: TimeLike): Promise<void> {
+  return new Promise((resolve, reject) => {
+    F.futimes(fd, atime, mtime, err => {
+      if (err) reject(err);
+      else resolve();
+    });
+  });
+}
+
+
+/**
+ * Change the file system timestamps of a file.
+ * @param fd file descriptor
+ * @param atime last access time
+ * @param mtime last modified time
+ * @param callback callback (err)
+ */
+export function futimes(fd: number, atime: TimeLike, mtime: TimeLike, callback: NoParamCallback): void;
+
+/**
+ * Change the file system timestamps of a file.
+ * @param fd file descriptor
+ * @param atime last access time
+ * @param mtime last modified time
+ */
+export function futimes(fd: number, atime: TimeLike, mtime: TimeLike): Promise<void>;
+
+export function futimes(...args: any[]): void | Promise<void> {
+  if (typeof args[args.length-1]==="function") F.futimes.apply(null, args);
+  else return futimesAsync.apply(null, args);
+}
+
+
+
+
+// LCHOWN
+// ------
+
+// Set the owner of a symbolic link.
+export {lchownSync} from "fs";
+
+
+/**
+ * Set the owner of a symbolic link.
+ * @param path file descriptor
+ * @param uid user id
+ * @param gid group id
+ */
+export function lchownAsync(path: PathLike, uid: number, gid: number): Promise<void> {
+  return new Promise((resolve, reject) => {
+    F.lchown(path, uid, gid, err => {
+      if (err) reject(err);
+      else resolve();
+    });
+  });
+}
+
+
+/**
+ * Set the owner of a symbolic link.
+ * @param path file descriptor
+ * @param uid user id
+ * @param gid group id
+ * @param callback callback (err)
+ */
+export function lchown(path: PathLike, uid: number, gid: number, callback: NoParamCallback): void;
+
+/**
+ * Set the owner of a symbolic link.
+ * @param path file descriptor
+ * @param uid user id
+ * @param gid group id
+ */
+export function lchown(path: PathLike, uid: number, gid: number): Promise<void>;
+
+export function lchown(...args: any[]): void | Promise<void> {
+  if (typeof args[args.length-1]==="function") F.lchown.apply(null, args);
+  else return lchownAsync.apply(null, args);
 }
 
 
