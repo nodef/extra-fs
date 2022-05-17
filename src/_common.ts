@@ -698,6 +698,151 @@ export function lchown(...args: any[]): void | Promise<void> {
 
 
 
+// LINK
+// ----
+
+// Create a hard link to a file or directory.
+export {linkSync} from "fs";
+
+
+/**
+ * Create a hard link to a file or directory.
+ * @param target existing path
+ * @param link new path
+ */
+export function linkAsync(target: PathLike, link: PathLike): Promise<void> {
+  return new Promise((resolve, reject) => {
+    F.link(target, link, err => {
+      if (err) reject(err);
+      else resolve();
+    });
+  });
+}
+
+
+/**
+ * Create a hard link to a file or directory.
+ * @param target existing path
+ * @param link new path
+ * @param callback callback (err)
+ */
+export function link(target: PathLike, link: PathLike, callback: NoParamCallback): void;
+
+/**
+ * Create a hard link to a file or directory.
+ * @param target existing path
+ * @param link new path
+ */
+export function link(target: PathLike, link: PathLike): Promise<void>;
+
+export function link(...args: any[]): void | Promise<void> {
+  if (typeof args[args.length-1]==="function") F.link.apply(null, args);
+  else return linkAsync.apply(null, args);
+}
+
+
+
+
+// LSTAT
+// -----
+
+// Get file status, without dereferencing symbolic links.
+export {lstatSync} from "fs";
+
+
+/**
+ * Get file status, without dereferencing symbolic links.
+ * @param path file path
+ * @param options stat options
+ */
+export function lstatAsync(path: PathLike, options?: StatOptions): Promise<Stats | BigIntStats> {
+  return new Promise((resolve, reject) => {
+    F.lstat(path, options, (err, stats) => {
+      if (err) reject(err);
+      else resolve(stats);
+    });
+  });
+}
+
+
+/**
+ * Get file status, without dereferencing symbolic links.
+ * @param path file path
+ * @param callback callback (err, stats)
+ */
+export function lstat(path: PathLike, callback: StatCallback): void;
+
+/**
+ * Get file status, without dereferencing symbolic links.
+ * @param path file path
+ * @param options stat options
+ * @param callback callback (err, stats)
+ */
+export function lstat(path: PathLike, options: StatOptions, callback: StatCallback): void;
+
+/**
+ * Get file status, without dereferencing symbolic links.
+ * @param path file path
+ * @param options stat options
+ */
+export function lstat(path: PathLike, options?: StatOptions): Promise<Stats | BigIntStats>;
+
+export function lstat(...args: any[]): void | Promise<Stats | BigIntStats> {
+  if (typeof args[args.length-1]==="function") F.lstat.apply(null, args);
+  else return lstatAsync.apply(null, args);
+}
+
+
+
+
+// LUTIMES
+// -------
+
+// Change the file system timestamps of a file, without dereferencing symbolic links.
+export {lutimesSync} from "fs";
+
+
+/**
+ * Change the file system timestamps of a file, without dereferencing symbolic links.
+ * @param path file path
+ * @param atime last access time
+ * @param mtime last modified time
+ */
+export function lutimesAsync(path: PathLike, atime: TimeLike, mtime: TimeLike): Promise<void> {
+  return new Promise((resolve, reject) => {
+    F.lutimes(path, atime, mtime, err => {
+      if (err) reject(err);
+      else resolve();
+    });
+  });
+}
+
+
+/**
+ * Change the file system timestamps of a file, without dereferencing symbolic links.
+ * @param path file path
+ * @param atime last access time
+ * @param mtime last modified time
+ * @param callback callback (err)
+ */
+export function lutimes(path: PathLike, atime: TimeLike, mtime: TimeLike, callback: NoParamCallback): void;
+
+/**
+ * Change the file system timestamps of a file, without dereferencing symbolic links.
+ * @param path file path
+ * @param atime last access time
+ * @param mtime last modified time
+ */
+export function lutimes(path: PathLike, atime: TimeLike, mtime: TimeLike): Promise<void>;
+
+export function lutimes(...args: any[]): void | Promise<void> {
+  if (typeof args[args.length-1]==="function") F.lutimes.apply(null, args);
+  else return lutimesAsync.apply(null, args);
+}
+
+
+
+
 // WRITE
 // -----
 
