@@ -1,7 +1,7 @@
 import {EOL}  from "os";
 import {join} from "path";
 import {PathLike, PathOrFileDescriptor} from "fs";
-import {Mode} from "fs";
+import {Mode, Stats, BigIntStats, StatOptions} from "fs";
 import {WriteFileOptions, WriteVResult} from "fs";
 import {CopyOptions, NoParamCallback} from "fs"
 import {constants as C} from "fs";
@@ -404,6 +404,146 @@ export function fchown(fd: number, uid: number, gid: number): Promise<void>;
 export function fchown(...args: any[]): void | Promise<void> {
   if (typeof args[args.length-1]==="function") F.fchown.apply(null, args);
   else return fchownAsync.apply(null, args);
+}
+
+
+
+
+// FDATASYNC
+// ---------
+
+// Force all currently queued I/O operations associated with the file to the operating system's synchronized I/O completion state.
+export {fdatasyncSync} from "fs";
+
+
+/**
+ * Force all currently queued I/O operations associated with the file to the operating system's synchronized I/O completion state.
+ * @param fd file descriptor
+ */
+export function fdatasyncAsync(fd: number): Promise<void> {
+  return new Promise((resolve, reject) => {
+    F.fdatasync(fd, err => {
+      if (err) reject(err);
+      else resolve();
+    });
+  });
+}
+
+
+/**
+ * Force all currently queued I/O operations associated with the file to the operating system's synchronized I/O completion state.
+ * @param fd file descriptor
+ * @param callback callback (err)
+ */
+export function fdatasync(fd: number, callback: NoParamCallback): void;
+
+/**
+ * Force all currently queued I/O operations associated with the file to the operating system's synchronized I/O completion state.
+ * @param fd file descriptor
+ */
+export function fdatasync(fd: number): Promise<void>;
+
+export function fdatasync(...args: any[]): void | Promise<void> {
+  if (typeof args[args.length-1]==="function") F.fdatasync.apply(null, args);
+  else return fdatasyncAsync.apply(null, args);
+}
+
+
+
+
+// FSTAT
+// -----
+
+/** Get results of [f]stat*(). */
+export type StatCallback = (err: NodeJS.ErrnoException | null, stats: Stats | BigIntStats) => void;
+
+
+// Get information about a file.
+export {fstatSync} from "fs";
+
+
+/**
+ * Get information about a file.
+ * @param fd file descriptor
+ * @param options stat options
+ */
+export function fstatAsync(fd: number, options?: StatOptions): Promise<Stats | BigIntStats> {
+  return new Promise((resolve, reject) => {
+    F.fstat(fd, options, (err, stats) => {
+      if (err) reject(err);
+      else resolve(stats);
+    });
+  });
+}
+
+
+/**
+ * Get information about a file.
+ * @param fd file descriptor
+ * @param callback callback (err, stats)
+ */
+export function fstat(fd: number, callback: StatCallback): void;
+
+/**
+ * Get information about a file.
+ * @param fd file descriptor
+ * @param options stat options
+ * @param callback callback (err, stats)
+ */
+export function fstat(fd: number, options: StatOptions, callback: StatCallback): void;
+
+/**
+ * Get information about a file.
+ * @param fd file descriptor
+ * @param options stat options
+ */
+export function fstat(fd: number, options?: StatOptions): Promise<Stats | BigIntStats>;
+
+export function fstat(...args: any[]): void | Promise<Stats | BigIntStats> {
+  if (typeof args[args.length-1]==="function") F.fstat.apply(null, args);
+  else return fstatAsync.apply(null, args);
+}
+
+
+
+
+// FSYNC
+// -----
+
+// Demand all data for the file to be flushed to the storage.
+export {fsyncSync} from "fs";
+
+
+/**
+ * Demand all data for the file to be flushed to the storage.
+ * @param fd file descriptor
+ */
+export function fsyncAsync(fd: number): Promise<void> {
+  return new Promise((resolve, reject) => {
+    F.fsync(fd, err => {
+      if (err) reject(err);
+      else resolve();
+    });
+  });
+}
+
+
+/**
+ * Demand all data for the file to be flushed to the storage.
+ * @param fd file descriptor
+ * @param callback callback (err)
+ */
+export function fsync(fd: number, callback: NoParamCallback): void;
+
+/**
+ * Demand all data for the file to be flushed to the storage.
+ * @param fd file descriptor
+ */
+export function fsync(fd: number): Promise<void>;
+
+export function fsync(...args: any[]): void | Promise<void> {
+  if (typeof args[args.length-1]==="function") F.fsync.apply(null, args);
+  else return fsyncAsync.apply(null, args);
 }
 
 
