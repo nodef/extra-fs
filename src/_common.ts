@@ -265,6 +265,150 @@ export function copyFile(...args: any[]): void | Promise<void> {
 
 
 
+// CP
+// --
+
+// Copy entire directory structure from source to destination. When copying a directory, behaviour is similar to `cp src/ dest/`.
+export {cpSync} from "fs";
+// Copy entire directory structure from source to destination. When copying a directory, behaviour is similar to `cp src/ dest/`.
+export {cp as cpAsync} from "fs/promises";
+
+
+/**
+ * Copy source file to destination. By default, destination is overwritten if it already exists.
+ * @param src source path to copy
+ * @param dest destination path to copy to
+ * @param callback callback (err)
+ */
+export function cp(src: string, dest: string, callback: NoParamCallback): void;
+
+/**
+ * Copy source file to destination. By default, destination is overwritten if it already exists.
+ * @param src source filename to copy
+ * @param dest destination filename of the copy operation
+ * @param options copy options
+ * @param callback callback (err)
+ */
+export function cp(src: PathLike, dest: PathLike, options: CopyOptions, callback: NoParamCallback): void;
+
+/**
+ * Copy source file to destination. By default, destination is overwritten if it already exists.
+ * @param src source filename to copy
+ * @param dest destination filename of the copy operation
+ * @param options copy options
+ */
+export function cp(src: PathLike, dest: PathLike, options?: CopyOptions): Promise<void>;
+
+export function cp(...args: any[]): void | Promise<void> {
+  if (typeof args[args.length-1]==="function") F.cp.apply(null, args);
+  else return P.cp.apply(null, args);
+}
+
+
+
+
+// CREATE-(READ/WRITE)-STREAM
+// --------------------------
+
+export {createReadStream}  from "fs";
+export {createWriteStream} from "fs";
+
+
+
+
+// FCHMOD
+// ------
+
+// Set the permissions of a file.
+export {fchmodSync} from "fs";
+
+
+/**
+ * Set the permissions of a file.
+ * @param fd file descriptor
+ * @param mode permission mode
+ */
+export function fchmodAsync(fd: number, mode: Mode): Promise<void> {
+  return new Promise((resolve, reject) => {
+    F.fchmod(fd, mode, err => {
+      if (err) reject(err);
+      else resolve();
+    });
+  });
+}
+
+
+/**
+ * Set the permissions of a file.
+ * @param fd file descriptor
+ * @param mode permission mode
+ * @param callback callback (err)
+ */
+export function fchmod(fd: number, mode: Mode, callback: NoParamCallback): void;
+
+/**
+ * Set the permissions of a file.
+ * @param fd file descriptor
+ * @param mode permission mode
+ */
+export function fchmod(fd: number, mode: Mode): Promise<void>;
+
+export function fchmod(...args: any[]): void | Promise<void> {
+  if (typeof args[args.length-1]==="function") F.fchmod.apply(null, args);
+  else return fchmodAsync.apply(null, args);
+}
+
+
+
+
+// FCHOWN
+// ------
+
+// Set the owner of a file.
+export {fchownSync} from "fs";
+
+
+/**
+ * Set the owner of a file.
+ * @param fd file descriptor
+ * @param uid user id
+ * @param gid group id
+ */
+export function fchownAsync(fd: number, uid: number, gid: number): Promise<void> {
+  return new Promise((resolve, reject) => {
+    F.fchown(fd, uid, gid, err => {
+      if (err) reject(err);
+      else resolve();
+    });
+  });
+}
+
+
+/**
+ * Set the owner of a file.
+ * @param fd file descriptor
+ * @param uid user id
+ * @param gid group id
+ * @param callback callback (err)
+ */
+export function fchown(fd: number, uid: number, gid: number, callback: NoParamCallback): void;
+
+/**
+ * Set the owner of a file.
+ * @param fd file descriptor
+ * @param uid user id
+ * @param gid group id
+ */
+export function fchown(fd: number, uid: number, gid: number): Promise<void>;
+
+export function fchown(...args: any[]): void | Promise<void> {
+  if (typeof args[args.length-1]==="function") F.fchown.apply(null, args);
+  else return fchownAsync.apply(null, args);
+}
+
+
+
+
 // WRITE
 // -----
 
