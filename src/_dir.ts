@@ -1,3 +1,4 @@
+import {join} from "path";
 import {PathLike} from "fs";
 import {TimeLike} from "fs";
 import {OpenMode} from "fs";
@@ -359,4 +360,92 @@ export function rmdir(path: PathLike, options?: RmDirOptions): Promise<void>;
 export function rmdir(...args: any[]): void | Promise<void> {
   if (typeof args[args.length-1]==="function") F.rm.apply(null, args);
   else return P.rm.apply(null, args);
+}
+
+
+
+
+// DEHUSK
+// ------
+
+/** Get results of dehuskdir(). */
+export type DehuskDirCallback = (err: NodeJS.ErrnoException, seed?: string) => void;
+
+
+/**
+ * Remove outer one-item directories.
+ * @param dir outer directory
+ * @param depth maximum depth (-1 => all)
+ * @returns seed directory
+ */
+ export function dehuskdirSync(dir: string, depth: number=-1): string {
+  for (var seed=dir; depth>0; depth--) {
+    var es = F.readdirSync(seed, {withFileTypes: true});
+    if (es.length===0 || es.length>1 || !es[0].isDirectory()) break;
+    seed = join(seed, es[0].name);
+  }
+  if (seed===dir) return seed;
+  var tmp = dir + Math.random();
+  F.renameSync(seed, tmp);
+  F.rmdirSync(dir);
+  F.renameSync(tmp, dir);
+  return seed;
+}
+
+
+/**
+ * Remove outer one-item directories.
+ * @param dir outer directory
+ * @param depth maximum depth (-1 => all)
+ * @returns seed directory
+ */
+export async function dehuskdirAsync(dir: string, depth: number=-1): Promise<string> {
+  for (var seed=dir; depth>0; depth--) {
+    var es = await P.readdir(seed, {withFileTypes: true});
+    if (es.length===0 || es.length>1 || !es[0].isDirectory()) break;
+    seed = join(seed, es[0].name);
+  }
+  if (seed===dir) return seed;
+  var tmp = dir + Math.random();
+  await P.rename(seed, tmp);
+  await P.rmdir(dir);
+  await P.rename(tmp, dir);
+  return seed;
+}
+
+
+function dehuskdirCb(...args: any[]): void {
+  var dir   = args[0];
+  var depth = typeof args[1]==="number"? args[1] : 0;
+  var fn    = args[args.length-1];
+  dehuskdirAsync(dir, depth).then(seed => fn(seed), fn);
+}
+
+
+/**
+ * Remove outer one-item directories.
+ * @param dir outer directory
+ * @param fn callback (err, seed_directory)
+ */
+export function dehuskdir(dir: string, fn: DehuskDirCallback): void;
+
+/**
+ * Remove outer one-item directories.
+ * @param dir outer directory
+ * @param depth maximum depth
+ * @param fn callback (err, seed_directory)
+ */
+export function dehuskdir(dir: string, depth: number, fn: DehuskDirCallback): void;
+
+/**
+ * Remove outer one-item directories.
+ * @param dir outer directory
+ * @param depth maximum depth (-1 => all)
+ * @returns seed directory
+ */
+export function dehuskdir(dir: string, depth?: number): Promise<string>;
+
+export function dehuskdir(...args: any[]): void | Promise<string> {
+  if (typeof args[args.length-1]==="function") dehuskdirCb.apply(null, args);
+  else return dehuskdirAsync.apply(null, args);
 }

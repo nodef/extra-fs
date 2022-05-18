@@ -139,8 +139,8 @@ export {
 
 
 // ACCESS
-export {access} from "./_common";
-export {accessAsync} from "./_common";
+export {access} from "./_any";
+export {accessAsync} from "./_any";
 
 
 
@@ -148,9 +148,9 @@ export {accessAsync} from "./_common";
 // TYPES
 // =====
 
-export {ExistsCallback} from "./_common";
-export {TextCallback}   from "./_common";
-export {JsonCallback}   from "./_common";
+export {ExistsCallback} from "./_any";
+export {ReadFileTextCallback}   from "./_file";
+export {ReadJsonCallback}   from "./_file";
 
 
 // CLASSES
@@ -165,27 +165,27 @@ export {FsError} from "./_common";
 // =======
 
 // COPY
-export {copySync} from "./_common";
-export {copy}     from "./_common";
+// export {copySync} from "./_common";
+// export {copy}     from "./_common";
 
 // MOVE
-export {moveFileSync} from "./_common";
-export {moveFile}     from "./_common";
-export {moveSync}     from "./_common";
-export {move}         from "./_common";
+// export {moveFileSync} from "./_common";
+// export {moveFile}     from "./_common";
+// export {moveSync}     from "./_common";
+// export {move}         from "./_common";
 
 // TEXT
-export {readFileTextSync}  from "./_common";
-export {readFileText}      from "./_common";
-export {writeFileTextSync} from "./_common";
-export {writeFileText}     from "./_common";
+export {readFileTextSync}  from "./_file";
+export {readFileText}      from "./_file";
+export {writeFileTextSync} from "./_file";
+export {writeFileText}     from "./_file";
 
 // JSON
-export {readJsonSync}  from "./_common";
-export {readJson}      from "./_common";
-export {writeJsonSync} from "./_common";
-export {writeJson}     from "./_common";
+export {readJsonSync}  from "./_file";
+export {readJson}      from "./_file";
+export {writeJsonSync} from "./_file";
+export {writeJson}     from "./_file";
 
 // DEHUSK
-export {dehuskdirSync} from "./_common";
-export {dehuskdir}     from "./_common";
+export {dehuskdirSync} from "./_dir";
+export {dehuskdir}     from "./_dir";

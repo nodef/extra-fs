@@ -37,19 +37,19 @@ export {writeFile}  from "fs/promises";
 
 
 // COPY
-export {copyAsync as copy} from "./_common";
+// export {copyAsync as copy} from "./_common";
 
 // MOVE
-export {moveFileAsync as moveFile} from "./_common";
-export {moveAsync     as move}     from "./_common";
+// export {moveFileAsync as moveFile} from "./_common";
+// export {moveAsync     as move}     from "./_common";
 
 // TEXT
-export {readFileTextAsync  as readFileText}  from "./_common";
-export {writeFileTextAsync as writeFileText} from "./_common";
+export {readFileTextAsync  as readFileText}  from "./_file";
+export {writeFileTextAsync as writeFileText} from "./_file";
 
 // JSON
-export {readJsonAsync  as readJson}  from "./_common";
-export {writeJsonAsync as writeJson} from "./_common";
+export {readJsonAsync  as readJson}  from "./_file";
+export {writeJsonAsync as writeJson} from "./_file";
 
 // DEHUSK
-export {dehuskdirAsync as dehuskdir} from "./_common";
+export {dehuskdirAsync as dehuskdir} from "./_dir";
