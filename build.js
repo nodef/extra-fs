@@ -4,12 +4,105 @@ const {git, github, package}        = require('extra-build');
 const {javascript, jsdoc, markdown} = require('extra-build');
 
 
-const owner  = 'nodef';
-const srcts  = 'index.ts';
-const outjs  = 'index.js';
-const outmjs = 'index.mjs';
-const outdts = 'index.d.ts';
+const owner   = 'nodef';
+const srcts   = 'index.ts';
+const outjs   = 'index.js';
+const outmjs  = 'index.mjs';
+const outdts  = 'index.d.ts';
+const apijson = 'api.log';
 
+
+
+// Generate API json using typedoc.
+function generateApi() {
+  if (fs.existsSync(api)) return;
+  cp.execLogSync(`typedoc "src/${srcts}" --json "${apijson}"`);
+}
+
+// Read API json.
+function readApi() {
+  return fs.readJsonSync(apijson);
+}
+
+// Create API map.
+function createApiMap(x, a=new Map()) {
+  if (typeof x!=='object') return a;
+  if (x instanceof Array) {
+    for (var v of x)
+    createApiMap(v, a);
+  }
+  else {
+    if (typeof x.id==='number') a.set(x.id, x);
+    for (var k in x)
+    createApiMap(x[k], a);
+  }
+  return a;
+}
+
+// Rename API kind appropriately.
+function apikindRename(x) {
+  x = x.replace(/([A-Z].+)/, '$1');
+  x = x.replace(/\S+/, '_');
+  return x.toLowerCase();
+}
+
+// Get kind of API element.
+function apiKind(x) {
+  var a = x.kind || '';
+  if (a && !/reference|alias/i.test(a)) return apikindRename(a);
+  if (x.declaration!=null) return apiKind(x.declaration);
+  if (x.type!=null)        return apiKind(x.type);
+  return apikindRename(a);
+}
+
+// Get kind from API map.
+function apimKind(m, id) {
+  var x = m.get(id);
+  var a = apiKind(x);
+  if (a!=null) return a;
+  if (x.target!=null) return apimKind(m, x.target);
+}
+
+// Get description of API element.
+function apiDescription(x) {
+  if (x.shortText!=null)   return x.shortText;
+  if (x.comment!=null)     return apiDescription(x.comment);
+  if (x.signatures!=null)  return apiDescription(x.signatures[0]);
+  if (x.declaration!=null) return apiDescription(x.declaration);
+  if (x.type!=null)        return apiDescription(x.type);
+  return '';
+}
+
+// Get description from API map.
+function apimDescription(m, id) {
+  var x = m.get(id);
+  var a = apiDescription(x);
+  if (a!=null) return a;
+  if (x.target!=null) return apimDescription(m, x.target);
+}
+
+// Get details from API map.
+function apimDetails(m, id) {
+  var x    = m.get(id);
+  var name = x.name;
+  var kind = apimKind(m, id);
+  var description = apimDescription(m, id);
+  return {name, kind, description};
+}
+
+// Get children from API map.
+function apimChildren(m, fm=null) {
+  var x  = m.get(0);
+  var fm = fm || (v => v);
+  var cs = x.children.map(c => fm(apimDetails(m, c.id)));
+  cs.sort((a, b) => a.kind.localeCompare(b.kind) || a.name.localeCompare(b.name));
+  return cs;
+}
+
+// Get keywords from API children.
+function apicKeywords(cs) {
+  return cs.map(c => c.name);
+}
 
 
 // Is given file a submodule?
@@ -266,6 +359,7 @@ function generateWiki() {
 // Update index table for README, wiki.
 function updateMarkdownIndex(rkind) {
   forEachSourceFile((f, exps, dmap) => {
+    console.log(exps, dmap);
     var nam = f.replace(/\..*/, '');
     var pre = f === 'index.ts'? '' : nam;
     var out = pre? `wiki/${nam}.md` : 'README.md';
