@@ -7,7 +7,7 @@ import {NoParamCallback} from "fs";
 import {constants as C}  from "fs";
 import * as F from "fs";
 import * as P from "fs/promises";
-import {FsError}        from "./_common";
+import {FsError} from "./_all";
 
 
 

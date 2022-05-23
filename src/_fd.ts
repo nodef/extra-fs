@@ -10,9 +10,9 @@ import {ReadAsyncOptions} from "fs";
 import {ReadVResult}      from "fs";
 import {WriteVResult}     from "fs";
 import {NoParamCallback}  from "fs";
-import {StatCallback}     from "./_common";
 import * as F from "fs";
 import * as P from "fs/promises";
+import {StatCallback} from "./_all";
 
 
 

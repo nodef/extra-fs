@@ -4,8 +4,8 @@ import {BigIntStats} from "fs";
 
 
 
-// CLASSES
-// =======
+// TYPES
+// =====
 
 /** File system error. */
 export class FsError extends Error implements NodeJS.ErrnoException {
@@ -18,12 +18,6 @@ export class FsError extends Error implements NodeJS.ErrnoException {
     this.name = this.constructor.name;
   }
 }
-
-
-
-
-// BUILT-IN METHODS
-// ================
 
 
 

@@ -6,7 +6,7 @@ import {EncodingOption}       from "fs";
 import {BufferEncodingOption} from "fs";
 import {NoParamCallback}      from "fs";
 import {StatOptions}          from "fs";
-import {StatCallback}         from "./_common";
+import {StatCallback}         from "./_all";
 import * as F from "fs";
 import * as P from "fs/promises";
 
