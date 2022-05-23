@@ -1,22 +1,17 @@
-import {EOL} from "os";
+import {EOL}      from "os";
 import {PathLike} from "fs";
 import {TimeLike} from "fs";
-import {OpenMode} from "fs";
-import {Mode}     from "fs";
 import {Stats}            from "fs";
 import {BigIntStats}      from "fs";
 import {StatOptions}      from "fs";
-import {ReadPosition}     from "fs";
-import {ReadAsyncOptions} from "fs";
-import {ReadVResult}      from "fs";
 import {ObjectEncodingOptions} from "fs";
-import {WriteFileOptions}     from "fs";
-import {PathOrFileDescriptor} from "fs";
-import {NoParamCallback}  from "fs";
-import {StatCallback}     from "./_common";
+import {WriteFileOptions}      from "fs";
+import {PathOrFileDescriptor}  from "fs";
+import {NoParamCallback}       from "fs";
 import * as F from "fs";
 import * as P from "fs/promises";
 import {EventEmitter} from "events";
+import {StatCallback} from "./_common";
 
 
 

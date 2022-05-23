@@ -1,13 +1,13 @@
-import {join} from "path";
-import {Mode}     from "fs";
-import {PathLike} from "fs";
+import {join}        from "path";
+import {Mode}        from "fs";
+import {PathLike}    from "fs";
 import {CopyOptions} from "fs";
 import {RmOptions}   from "fs";
 import {NoParamCallback} from "fs";
+import {constants as C}  from "fs";
 import * as F from "fs";
 import * as P from "fs/promises";
-import {constants as C} from "fs";
-import {FsError} from "./_common";
+import {FsError}        from "./_common";
 
 
 
@@ -532,3 +532,11 @@ function move(src: string, dest: string, options?: CopyOptions | NoParamCallback
   var _o  = arguments.length === 4? options as CopyOptions : null;
   moveAsync(src, dest, _o).then(() => _fn(null), _fn);
 }
+
+
+
+
+// ACCESS?
+// -------
+// STAT?
+// -----
