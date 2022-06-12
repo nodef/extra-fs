@@ -1,6 +1,6 @@
 {
   "name": "extra-fs",
-  "version": "3.0.24",
+  "version": "3.0.25",
   "description": "Useful additions to inbuilt fs module.",
   "main": "index.js",
   "module": "index.mjs",
@@ -29,11 +29,11 @@
     "fs"
   ],
   "devDependencies": {
-    "@rollup/plugin-commonjs": "^21.0.3",
-    "@rollup/plugin-node-resolve": "^13.2.0",
-    "@types/node": "^17.0.23",
-    "extra-build": "^2.0.31",
+    "@rollup/plugin-commonjs": "^22.0.0",
+    "@rollup/plugin-node-resolve": "^13.3.0",
+    "@types/node": "^17.0.42",
+    "extra-build": "^2.1.22",
     "rollup-plugin-cleanup": "^3.2.1",
-    "rollup-plugin-dts": "^4.2.1"
+    "rollup-plugin-dts": "^4.2.2"
   }
 }
