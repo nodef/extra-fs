@@ -146,15 +146,15 @@ example4();
 
 ## References
 
+- [Node.js File system API](https://nodejs.org/api/fs.html)
+- [fs-extra package](https://www.npmjs.com/package/fs-extra)
 - [Linux Commands](https://www.geeksforgeeks.org/linux-commands/)
-- [fs-extra](https://www.npmjs.com/package/fs-extra)
-- [which](https://www.npmjs.com/package/which)
 - [RegExr](https://regexr.com)
 
 <br>
 <br>
 
-[![](https://img.youtube.com/vi/KqqxIP3mUw4/maxresdefault.jpg)](https://www.youtube.com/watch?v=KqqxIP3mUw4)
+[![](https://img.youtube.com/vi/nA3x4vVEpKc/maxresdefault.jpg)](https://www.youtube.com/watch?v=nA3x4vVEpKc)
 
 
 [open]: https://nodef.github.io/extra-fs/modules.html#open

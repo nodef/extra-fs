@@ -53,7 +53,8 @@ export {
 // TYPES
 // =====
 
-export {FsError as Error} from "./_all";
+export {FsError} from "./_all";
+export {StatCallback} from "./_all";
 
 
 
