@@ -3,7 +3,25 @@ Useful additions to inbuilt [fs] module.<br>
 📜 [Files](https://unpkg.com/extra-fs/),
 📰 [Docs](https://nodef.github.io/extra-fs/).
 
+This package provides **async versions of functions** (in addition to the
+existing *sync* and *callback*-based functions) in the inbuilt [fs] module,
+exposed as `*Async()` from the `fs.promises` namespace. They can be used with
+`Promise`-based asynchronous programming using the `await` keyword. In addition,
+**callback-based functions**, such as [readFile], also **behave as async functions**
+when a *callback* is **not provided**. The idea behind using `*Async()` function
+names is to provide a **flat module**.
+
+In addition, convenience functions such as [readFileText] and [readJson] are
+included. For performing file/directory **existence check** *async* [exists],
+[assertExists], and [assertNotExists] can be used. **Cleanup** of *one-item outer*
+*directories* can be performed with [dehuskdir]. This package previously included
+`which()`, which is now instead suitably included in [extra-child-process]
+package.
+
 > Stability: [Experimental](https://www.youtube.com/watch?v=L1j93RnIxEo).
+
+[fs]: https://nodejs.org/api/fs.html
+[extra-child-process]: https://www.npmjs.com/package/extra-child-process
 
 <br>
 
@@ -90,7 +108,6 @@ const fs = require('extra-fs');
 [![](https://img.youtube.com/vi/KqqxIP3mUw4/maxresdefault.jpg)](https://www.youtube.com/watch?v=KqqxIP3mUw4)
 
 
-[fs]: https://nodejs.org/api/fs.html
 [open]: https://nodef.github.io/extra-fs/modules.html#open
 [close]: https://nodef.github.io/extra-fs/modules.html#close
 [read]: https://nodef.github.io/extra-fs/modules.html#read

@@ -1,6 +1,6 @@
 {
   "name": "extra-fs",
-  "version": "3.0.26",
+  "version": "3.0.27",
   "description": "Useful additions to inbuilt fs module.",
   "main": "index.js",
   "module": "index.mjs",
