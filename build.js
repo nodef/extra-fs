@@ -1,3 +1,4 @@
+const fs    = require('fs');
 const build = require('extra-build');
 
 const owner   = 'nodef';
@@ -54,24 +55,24 @@ function subDescription(nam) {
 
 
 // Publish sub package to NPM, GitHub.
-function publishSub(nam, sym, ver) {
-  fs.restoreFileSync('package.json', () => {
-    var m    = package.read();
-    var desc = `${m.description.slice(0, -1)} {${nam}}.`;
-    m.name = `@${m.name}/${nam}`;
-    m.description = subDescription(nam) || desc;
-    m.version  = ver;
-    m.keywords = keywords(`${nam}.ts`);
-    if (sym) { m.name += '.web'; }
-    fs.restoreFileSync('README.md', () => {
-      var txt = fs.readFileTextSync('README.md');
-      if (sym) txt = txt.replace(/\[Files\]\((.*?)\/\)/g, '[Files]($1.web/)');
-      fs.writeFileTextSync('README.md', txt);
-      package.write('.', m);
-      package.publish('.');
-      package.publishGithub('.', owner);
-    });
-  });
+function publishSub(ds, nam, ver) {
+  var _package = build.readDocument('package.json');
+  var m    = build.readMetadata();
+  var desc = `${m.description.slice(0, -1)} {${nam}}.`;
+  m.name   = `@${m.name}/${nam}`;
+  m.description = subDescription(nam) || desc;
+  m.version  = ver;
+  m.keywords = keywords(ds);
+  var _readme = build.readDocument('README.md');
+  var txt = build.readFileText('README.md');
+  txt = txt.replace('.<br>', `{${nam}} .<br>`);
+  build.writeFileText('README.md', txt);
+  build.writeMetadata('.', m);
+  build.publish('.');
+  try { build.publishGithub('.', owner); }
+  catch {}
+  build.writeDocument(_readme);
+  build.writeDocument(_package);
 }
 
 
@@ -84,19 +85,17 @@ function deployRoot(ds, ver) {
 
 // Deploy sub package to NPM, GitHub.
 function deploySub(ver) {
-  var m = package.read();
   for (var f of fs.readdirSync('src')) {
     if (/^_|index\.ts/.test(f)) continue;
     var nam = f.replace(/\..*/, '');
-    var sym = path.symbolname(`${m.name}-${nam}`);
-    fs.restoreFileSync('README.md', () => {
-      var md = `wiki/${nam}.md`;
-      if (fs.existsSync(md)) fs.copyFileSync(md, 'README.md');
-      generateMain(f, '');
-      publishSub(nam, '', ver);
-      // generateMain(f, sym);
-      // publishSub(nam, sym, ver);
-    });
+    var _readme = build.readDocument('README.md');
+    var md = `wiki/${nam}.md`;
+    if (fs.existsSync(md)) fs.copyFileSync(md, 'README.md');
+    var p  = build.loadDocs([`src/${f}`]);
+    var ds = p.children.map(build.docsDetails);
+    build.bundleScript(`.build/${f}`);
+    publishSub(ds, nam, ver);
+    build.writeDocument(_readme);
   }
 }
 
@@ -110,6 +109,7 @@ function deployAll(ds) {
   build.generateDocs(`src/${srcts}`);
   build.publishDocs();
   deployRoot(ds, ver);
+  deploySub(ver);
 }
 
 
