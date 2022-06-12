@@ -269,9 +269,8 @@ export function exists(path: string, fn: ExistsCallback): void;
 export function exists(path: string): Promise<boolean>;
 
 export function exists(path: string, fn?: ExistsCallback): void | Promise<boolean> {
-  var p = existsAsync(path);
-  if (fn) p.then(a => fn(null, a), fn);
-  return p;
+  if (typeof fn==="function") existsAsync(path).then(a => fn(null, a), fn);
+  else return existsAsync(path);
 }
 
 
@@ -298,8 +297,17 @@ export function assertExistsSync(path: string): void {
  * @param path file or directory path
  * @param fn callback (err)
  */
-export function assertExists(path: string, fn: NoParamCallback): void {
-  F.access(path, fn);
+export function assertExists(path: string, fn: NoParamCallback): void;
+
+/**
+ * Assert that a file or directory exists.
+ * @param path file or directory path
+ */
+export function assertExists(path: string): Promise<void>;
+
+export function assertExists(...args: any[]): void | Promise<void> {
+  if (typeof args[args.length-1]==="function") F.access.apply(null, args);
+  else return assertExistsAsync.apply(null, args);
 }
 
 
@@ -327,13 +335,7 @@ export function assertNotExistsSync(path: string, err?: string): void {
 }
 
 
-/**
- * Assert that a file or directory does not exist.
- * @param path file or directory path
- * @param err error code [ERR_FS_ENSURE_NOT_EXISTS_EEXIST]
- * @param fn callback (err)
- */
-export function assertNotExists(path: string, err: string | NoParamCallback, fn?: NoParamCallback): void {
+function assertNotExistsCb(path: string, err: string | NoParamCallback, fn?: NoParamCallback): void {
   var _fn  = arguments.length === 3? fn : err as NoParamCallback;
   var _err = arguments.length === 3? err as string : null;
   F.access(path, e => {
@@ -341,6 +343,33 @@ export function assertNotExists(path: string, err: string | NoParamCallback, fn?
     var message = `file or directory already exists, path "${path}"`;
     _fn(new FsError(_err || "ERR_FS_ENSURE_NOT_EXISTS", message));
   });
+}
+
+/**
+ * Assert that a file or directory does not exist.
+ * @param path file or directory path
+ * @param fn callback (err)
+ */
+export function assertNotExists(path: string, fn: NoParamCallback): void;
+
+/**
+ * Assert that a file or directory does not exist.
+ * @param path file or directory path
+ * @param err error code [ERR_FS_ENSURE_NOT_EXISTS_EEXIST]
+ * @param fn callback (err)
+ */
+export function assertNotExists(path: string, err: string, fn: NoParamCallback): void;
+
+/**
+ * Assert that a file or directory does not exist.
+ * @param path file or directory path
+ * @param err error code [ERR_FS_ENSURE_NOT_EXISTS_EEXIST]
+ */
+export function assertNotExists(path: string, err?: string): Promise<void>;
+
+export function assertNotExists(...args: any[]): void | Promise<void> {
+  if (typeof args[args.length-1]==="function") assertNotExistsCb.apply(null, args);
+  else return assertNotExistsAsync.apply(null, args);
 }
 
 
