@@ -206,6 +206,7 @@ example4();
 <br>
 
 [![](https://img.youtube.com/vi/nA3x4vVEpKc/maxresdefault.jpg)](https://www.youtube.com/watch?v=nA3x4vVEpKc)
+[![DOI](https://zenodo.org/badge/179787900.svg)](https://zenodo.org/badge/latestdoi/179787900)
 
 
 [open]: https://nodef.github.io/extra-fs/modules.html#open
