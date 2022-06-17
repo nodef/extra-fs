@@ -3,14 +3,56 @@ Useful additions to inbuilt [fs] module.<br>
 📜 [Files](https://unpkg.com/extra-fs/),
 📰 [Docs](https://nodef.github.io/extra-fs/).
 
-The file system we use today has its origins in the UNIX file system. A file is
-simply a chunk of data (bytes). Each file has a locally unique name and associated
-properties which can be grouped together in a hierarchy of directories. Given the
-tree-structure, a file can be uniquely identified by its full path.
+The **file system** we use today has its origins in the [UNIX file system]. A
+**file** is simply a *chunk of data (bytes)*. Each file has a *locally unique*
+*name* and *associated properties* which can be grouped together in a *hierarchy*
+of *directories*. A **directory** is a *list of files* and *other directories*,
+and has a *parent directory* (except the *root directory* `/`). Given the
+tree-structure, a file can be uniquely identified by its **full path**.
 
-Access to a file is provided by the file system though the use of a file descriptor.
-This can be obtained from [open]. Once a file has been used, it should be closed with
-[close]. TODO!
+Access to a file is provided by the file system though the use of a **file**
+**descriptor**. This can be obtained from [open] by providing the *file path*, and
+*open mode (read/write)*. Once a file has been opened and necessary operations
+performed, such as reading it with [read] or writing to it with [write], it
+should be *closed* with [close]. Reading or writing *multiple blocks* of a file at a
+time can be achieved with [readv] and [writev]. Once data is written to a file
+beyond it current size, it is *automatically expanded*. However, to reduce the
+size of a file (i.e., to *truncate* it), [ftruncate] is used. The **additional**
+**properties** attached to a file, such as *access/update time*, *access permissions*,
+or *ownership* of a file can be obtained with [fstat], and updated with [futimes],
+[fchmod], and [fchown] respectively.
+
+**Convenience methods** for accessing a file can also be used, which do not require
+us to go through the process of *opening* and *closing* files, and meticulously
+reading it or writing to it in blocks. These include [readFile], [writeFile],
+[appendFile], [truncate], [stat], [utimes]. [chmod] and [chown] are applicable
+or directories as well. A file can be opened as a **stream** for reading with
+[createReadStream] and for writing with [createWriteStream], and copied to
+another path with [copyFile]. Access to a file or directory can be checked with
+[access], renamed/moved with [rename], copied to another path (recursively) with
+[cp], and removed (recursively) with [rm].
+
+Similar to opening/closing of a file, a **directory** can be *opened* (to read its
+contents) with [opendir], and *read* with [readdir]. A *new directory* can be
+created with [mkdir], and an *empty directory* can be *removed* with [rmdir] (a
+non-empty directory can be recursively removed with [rm]). A *temporary directory*
+(with a unique random suffix) can be created with [mkdtemp]. Changes to a file
+or dierctory can be *observed* with [watch].
+
+The file system also provides **symbolic links** and **hard links** which simply *point*
+to an *existing file or directory*. *Symbolic (or soft) links* point to a file or
+directory through its *path*, while *hard links* point *directly* to the file.
+Therefore *renaming/moving* or *removing* the *original file* makes symbolic links
+**dangling** (pointing to *non-existent file*, and thus will *not* work) but hard links
+*continue to work* (think of them as *shared pointers* to a memory block). A *hard*
+*link* can be *created* with [link], and a *symbolic link* (also called *symlink*) with
+[symlink]. Note that *symlinks* are basically files containing the *path* of target
+file or directory, and this path can be *read* with [readlink]. The *full path* of a
+symlink can be *resolved* with [realpath]. *Hard links* point directly to files, and
+thus do not have a *"target"* path. The *additional properties* attached to a
+symlink, such as *access/update time*, or *ownership* of the symlink can be obtained
+with [lstat], and updated with [lutimes], and [lchown] respectively. The *access*
+*permissions* of a symlink *cannot* be changed.
 
 This package provides **async versions of functions** (in addition to the
 existing *sync* and *callback*-based functions) in the inbuilt [fs] module,
@@ -20,17 +62,20 @@ exposed as `*Async()` from the `fs.promises` namespace. They can be used with
 when a *callback* is **not provided**. The idea behind using `*Async()` function
 names is to provide a **flat module**.
 
-In addition, convenience functions such as [readFileText] and [readJson] are
-included. For performing file/directory **existence check** *async* [exists],
-[assertExists], and [assertNotExists] can be used. **Cleanup** of *one-item outer*
-*directories* can be performed with [dehuskdir]. This package previously included
-`which()`, which is now instead suitably included in [extra-child-process]
-package.
+In addition, convenience functions such as [readFileText], [writeFileText],
+[readJson] and [writeJson] are included. For performing file/directory
+**existence check** *async* [exists], [assertExists], and [assertNotExists] can
+be used. **Cleanup** of *one-item outer directories* (which are usually
+created upon extracting a compressed file) can be performed with [dehuskdir].
+This package previously included `which()`, which is now instead suitably
+included in [extra-child-process] package.
 
 > Stability: [Experimental](https://www.youtube.com/watch?v=L1j93RnIxEo).
 
 [fs]: https://nodejs.org/api/fs.html
 [extra-child-process]: https://www.npmjs.com/package/extra-child-process
+[UNIX file system]: https://www.youtube.com/watch?v=tc4ROCJYbm0
+
 
 <br>
 
@@ -152,6 +197,8 @@ example4();
 
 - [Node.js File system API](https://nodejs.org/api/fs.html)
 - [fs-extra package](https://www.npmjs.com/package/fs-extra)
+- [Soft and Hard links in Unix/Linux](https://www.geeksforgeeks.org/soft-hard-links-unixlinux/)
+- [Why do Linux/POSIX have lchown but not lchmod?](https://unix.stackexchange.com/q/224979/166668)
 - [Linux Commands](https://www.geeksforgeeks.org/linux-commands/)
 - [RegExr](https://regexr.com)
 
