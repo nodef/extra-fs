@@ -40,11 +40,6 @@ async function example3() {
 async function example4() {
   var contents = fs.readdirSync('src');
   var contents = await fs.readdir('src');
-  // → [
-  // →   'index.ts',
-  // →   'promises.ts',
-  // →   '_all.ts',
-  // →   ...
-  // → ]
+  // → [ 'index.ts' ]
 }
 example4();

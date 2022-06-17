@@ -3,6 +3,15 @@ Useful additions to inbuilt [fs] module.<br>
 📜 [Files](https://unpkg.com/extra-fs/),
 📰 [Docs](https://nodef.github.io/extra-fs/).
 
+The file system we use today has its origins in the UNIX file system. A file is
+simply a chunk of data (bytes). Each file has a locally unique name and associated
+properties which can be grouped together in a hierarchy of directories. Given the
+tree-structure, a file can be uniquely identified by its full path.
+
+Access to a file is provided by the file system though the use of a file descriptor.
+This can be obtained from [open]. Once a file has been used, it should be closed with
+[close]. TODO!
+
 This package provides **async versions of functions** (in addition to the
 existing *sync* and *callback*-based functions) in the inbuilt [fs] module,
 exposed as `*Async()` from the `fs.promises` namespace. They can be used with
@@ -68,12 +77,7 @@ example3();
 async function example4() {
   var contents = fs.readdirSync('src');
   var contents = await fs.readdir('src');
-  // → [
-  // →   'index.ts',
-  // →   'promises.ts',
-  // →   '_all.ts',
-  // →   ...
-  // → ]
+  // → [ 'index.ts' ]
 }
 example4();
 ```

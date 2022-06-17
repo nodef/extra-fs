@@ -4,14 +4,7 @@ const build = require('extra-build');
 const owner   = 'nodef';
 const srcts   = 'index.ts';
 const LOCATIONS = [
-  'src/_all.ts',
-  'src/_fd.ts',
-  'src/_link.ts',
-  'src/_file.ts',
-  'src/_dir.ts',
-  'src/_any.ts',
   'src/index.ts',
-  'src/promise.ts',
 ];
 
 
@@ -46,57 +39,10 @@ function deployRoot(ds, ver) {
 }
 
 
-// Get sub package description.
-function subDescription(nam) {
-  if (!fs.existsSync(`wiki/${nam}.md`)) return '';
-  var txt = fs.readFileTextSync(`wiki/${nam}.md`);
-  return txt.replace(/\n[\s\S]*/g, '').replace(/<br>/g, '');
-}
-
-
-// Publish sub package to NPM, GitHub.
-function publishSub(ds, nam, ver) {
-  var _package = build.readDocument('package.json');
-  var m    = build.readMetadata();
-  var desc = `${m.description.slice(0, -1)} {${nam}}.`;
-  m.name   = `@${m.name}/${nam}`;
-  m.description = subDescription(nam) || desc;
-  m.version  = ver;
-  m.keywords = keywords(ds);
-  var _readme = build.readDocument('README.md');
-  var txt = build.readFileText('README.md');
-  txt = txt.replace('.<br>', `{${nam}} .<br>`);
-  build.writeFileText('README.md', txt);
-  build.writeMetadata('.', m);
-  build.publish('.');
-  try { build.publishGithub('.', owner); }
-  catch {}
-  build.writeDocument(_readme);
-  build.writeDocument(_package);
-}
-
-
 // Deploy root package to NPM, GitHub.
 function deployRoot(ds, ver) {
   build.bundleScript(`.build/${srcts}`);
   publishRoot(ds, ver);
-}
-
-
-// Deploy sub package to NPM, GitHub.
-function deploySub(ver) {
-  for (var f of fs.readdirSync('src')) {
-    if (/^_|index\.ts/.test(f)) continue;
-    var nam = f.replace(/\..*/, '');
-    var _readme = build.readDocument('README.md');
-    var md = `wiki/${nam}.md`;
-    if (fs.existsSync(md)) fs.copyFileSync(md, 'README.md');
-    var p  = build.loadDocs([`src/${f}`]);
-    var ds = p.children.map(build.docsDetails);
-    build.bundleScript(`.build/${f}`);
-    publishSub(ds, nam, ver);
-    build.writeDocument(_readme);
-  }
 }
 
 
@@ -109,7 +55,6 @@ function deployAll(ds) {
   build.generateDocs(`src/${srcts}`);
   build.publishDocs();
   deployRoot(ds, ver);
-  deploySub(ver);
 }
 
 
