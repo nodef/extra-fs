@@ -1,8 +1,9 @@
 const fs    = require('fs');
 const build = require('extra-build');
 
-const owner   = 'nodef';
-const srcts   = 'index.ts';
+const owner = 'nodef';
+const repo  = build.readMetadata('.').name;
+const srcts = 'index.ts';
 const LOCATIONS = [
   'src/index.ts',
 ];
@@ -11,15 +12,17 @@ const LOCATIONS = [
 
 
 // Get keywords for main/sub package.
-function keywords(ds) {
-  var m = build.readMetadata('.');
-  var s = new Set([...m.keywords, ...ds.map(d => d.name)]);
+function keywords(ds, less=false) {
+  var rkind = /namespace|function/i;
+  var ds = less? ds.filter(d => rkind.test(d.kind)) : ds;
+  var m  = build.readMetadata('.');
+  var s  = new Set([...m.keywords, ...ds.map(d => d.name)]);
   return Array.from(s);
 }
 
 
-// Publish root package to NPM, GitHub.
-function publishRoot(ds, ver) {
+// Publish a root package to NPM, GitHub.
+function publishRootPackage(ds, ver, typ='') {
   var _package = build.readDocument('package.json');
   var m = build.readMetadata('.');
   m.version  = ver;
@@ -32,36 +35,67 @@ function publishRoot(ds, ver) {
 }
 
 
-// Deploy root package to NPM, GitHub.
-function deployRoot(ds, ver) {
-  build.bundleScript(`.build/${srcts}`);
-  publishRoot(ds, ver);
+// Transform JSDoc in .d.ts file.
+function transformJsdoc(x, dm) {
+  if (!dm.has(x.name)) return null;
+  var link = `[📘](https://github.com/${owner}/${repo}/wiki/${x.name})`;
+  x.description = x.description.replace(/\[📘\]\(.+?\)/g, '');
+  x.description = x.description.trim() + '\n' + link;
+  return x;
 }
 
 
-// Deploy root package to NPM, GitHub.
-function deployRoot(ds, ver) {
-  build.bundleScript(`.build/${srcts}`);
-  publishRoot(ds, ver);
-}
-
-
-// Deploy root, sub packages to NPM, GitHub.
-function deployAll(ds) {
-  var m   = build.readMetadata('.');
-  var ver = build.nextUnpublishedVersion(m.name, m.version);
+// Bundle script for test or publish.
+function bundleScript(ds) {
+  var dm = new Map(ds.map(d => [d.name, d]));
   build.exec(`tsc`);
-  build.updateGithubRepoDetails({topics: keywords(ds)});
+  build.bundleScript(`.build/${srcts}`);
+  build.jsdocifyScript('index.d.ts', 'index.d.ts', x => transformJsdoc(x, dm));
+}
+
+
+// Publish root packages to NPM, GitHub.
+function publishRootPackages(ds, ver) {
+  bundleScript(ds);
+  publishRootPackage(ds, ver);
+}
+
+
+// Publish docs.
+function publishDocs(ds) {
+  build.updateGithubRepoDetails({owner, repo, topics: keywords(ds, true)});
   build.generateDocs(`src/${srcts}`);
   build.publishDocs();
-  deployRoot(ds, ver);
+}
+
+
+// Pushish root, sub packages to NPM, GitHub.
+function publishPackages(ds) {
+  var m   = build.readMetadata('.');
+  var ver = build.nextUnpublishedVersion(m.name, m.version);
+  publishRootPackages(ds, ver);
 }
 
 
 // Generate wiki for all exported symbols.
-function generateWiki() {
-  // createWikiFiles();
-  // generateWikiFiles();
+function generateWiki(ds) {
+  var rkind = /namespace|function/i, useWiki = true;
+  var dm = new Map(ds.map(d => [d.name, d]));
+  for (var d of ds) {
+    var f = `wiki/${d.name}.md`;
+    if (!rkind.test(d.kind)) continue;
+    if (!fs.existsSync(f))  {
+      var txt = build.wikiMarkdown(d, {owner, repo, useWiki});
+      build.writeFileText(f, txt);
+    }
+    else {
+      var txt = build.readFileText(f);
+      txt = build.wikiUpdateDescription(txt, d);
+      txt = build.wikiUpdateCodeReference(txt, d, {owner, repo, useWiki})
+      txt = build.wikiUpdateLinkReferences(txt, dm, {owner, repo, useWiki});
+      build.writeFileText(f, txt);
+    }
+  }
 }
 
 
@@ -102,12 +136,14 @@ function updateReadme(ds) {
 }
 
 
+// Finally.
 function main(a) {
   var p  = build.loadDocs([`src/${srcts}`]);
   var ds = p.children.map(build.docsDetails);
-  if (a[2] === 'deploy') deployAll(ds);
-  else if (a[2] === 'wiki') generateWiki(ds);
-  else if (a[2] === 'readme') updateReadme(ds);
-  else build.bundleScript(`.build/${srcts}`);
+  if (a[2]==='wiki') generateWiki(ds);
+  else if (a[2]==='readme') updateReadme(ds);
+  else if (a[2]==='publish-docs') publishDocs(ds);
+  else if (a[2]==='publish-packages') publishPackages(ds);
+  else bundleScript(ds);
 }
 main(process.argv);
