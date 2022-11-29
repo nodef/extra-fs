@@ -146,7 +146,7 @@ example4();
 | [fstat] | Get information about a file. |
 | [fchmod] | Set the permissions of a file. |
 | [fchown] | Set the owner of a file. |
-| ... |   |
+| ... |  |
 | [link] | Create a hard link to a file or directory. |
 | [symlink] | Create a symbolic link to a file or directory. |
 | [readlink] | Read the contents of a symbolic link. |
@@ -154,7 +154,7 @@ example4();
 | [lutimes] | Change the file system timestamps of an object. |
 | [lstat] | Get information about a file, without dereferencing symbolic links. |
 | [lchown] | Set the owner of a symbolic link. |
-| ... |   |
+| ... |  |
 | [readFile] | Read the entire contents of a file. |
 | [writeFile] | Write data to the file, replace if it already exists. |
 | [appendFile] | Append data to a file, create if it does not exist. |
@@ -172,14 +172,14 @@ example4();
 | [watch] | Watch for changes on `filename`, where `filename` is either a file or a directory. |
 | [createReadStream] | Create a readable stream with 64kb `highWaterMark`. |
 | [createWriteStream] | Create a writeable stream from a desired `start` position. |
-| ... |   |
+| ... |  |
 | [mkdir] | Create a directory. |
 | [mkdtemp] | Create a unique temporary directory. |
 | [opendir] | Open a directory. |
 | [readdir] | Open a directory. |
 | [rmdir] | Remove a directory. |
 | [dehuskdir] | Remove outer one-item directories. |
-| ... |   |
+| ... |  |
 | [access] | Test a user's permissions for the file or directory. |
 | [chmod] | Change the permissions of a file. |
 | [chown] | Change owner and group of a file. |
@@ -210,53 +210,53 @@ example4();
 [![DOI](https://zenodo.org/badge/179787900.svg)](https://zenodo.org/badge/latestdoi/179787900)
 
 
-[open]: https://nodef.github.io/extra-fs/modules.html#open
-[close]: https://nodef.github.io/extra-fs/modules.html#close
-[read]: https://nodef.github.io/extra-fs/modules.html#read
-[write]: https://nodef.github.io/extra-fs/modules.html#write
-[readv]: https://nodef.github.io/extra-fs/modules.html#readv
-[writev]: https://nodef.github.io/extra-fs/modules.html#writev
-[ftruncate]: https://nodef.github.io/extra-fs/modules.html#ftruncate
-[futimes]: https://nodef.github.io/extra-fs/modules.html#futimes
-[fstat]: https://nodef.github.io/extra-fs/modules.html#fstat
-[fchmod]: https://nodef.github.io/extra-fs/modules.html#fchmod
-[fchown]: https://nodef.github.io/extra-fs/modules.html#fchown
-[link]: https://nodef.github.io/extra-fs/modules.html#link
-[symlink]: https://nodef.github.io/extra-fs/modules.html#symlink
-[readlink]: https://nodef.github.io/extra-fs/modules.html#readlink
-[realpath]: https://nodef.github.io/extra-fs/modules.html#realpath
-[lutimes]: https://nodef.github.io/extra-fs/modules.html#lutimes
-[lstat]: https://nodef.github.io/extra-fs/modules.html#lstat
-[lchown]: https://nodef.github.io/extra-fs/modules.html#lchown
-[readFile]: https://nodef.github.io/extra-fs/modules.html#readFile
-[writeFile]: https://nodef.github.io/extra-fs/modules.html#writeFile
-[appendFile]: https://nodef.github.io/extra-fs/modules.html#appendFile
-[truncate]: https://nodef.github.io/extra-fs/modules.html#truncate
-[unlink]: https://nodef.github.io/extra-fs/modules.html#unlink
-[utimes]: https://nodef.github.io/extra-fs/modules.html#utimes
-[stat]: https://nodef.github.io/extra-fs/modules.html#stat
-[copyFile]: https://nodef.github.io/extra-fs/modules.html#copyFile
-[readFileText]: https://nodef.github.io/extra-fs/modules.html#readFileText
-[writeFileText]: https://nodef.github.io/extra-fs/modules.html#writeFileText
-[readJson]: https://nodef.github.io/extra-fs/modules.html#readJson
-[writeJson]: https://nodef.github.io/extra-fs/modules.html#writeJson
-[watchFile]: https://nodef.github.io/extra-fs/modules.html#watchFile
-[unwatchFile]: https://nodef.github.io/extra-fs/modules.html#unwatchFile
-[watch]: https://nodef.github.io/extra-fs/modules.html#watch
-[createReadStream]: https://nodef.github.io/extra-fs/modules.html#createReadStream
-[createWriteStream]: https://nodef.github.io/extra-fs/modules.html#createWriteStream
-[mkdir]: https://nodef.github.io/extra-fs/modules.html#mkdir
-[mkdtemp]: https://nodef.github.io/extra-fs/modules.html#mkdtemp
-[opendir]: https://nodef.github.io/extra-fs/modules.html#opendir
-[readdir]: https://nodef.github.io/extra-fs/modules.html#readdir
-[rmdir]: https://nodef.github.io/extra-fs/modules.html#rmdir
-[dehuskdir]: https://nodef.github.io/extra-fs/modules.html#dehuskdir
-[access]: https://nodef.github.io/extra-fs/modules.html#access
-[chmod]: https://nodef.github.io/extra-fs/modules.html#chmod
-[chown]: https://nodef.github.io/extra-fs/modules.html#chown
-[rename]: https://nodef.github.io/extra-fs/modules.html#rename
-[cp]: https://nodef.github.io/extra-fs/modules.html#cp
-[rm]: https://nodef.github.io/extra-fs/modules.html#rm
-[exists]: https://nodef.github.io/extra-fs/modules.html#exists
-[assertExists]: https://nodef.github.io/extra-fs/modules.html#assertExists
-[assertNotExists]: https://nodef.github.io/extra-fs/modules.html#assertNotExists
+[open]: https://nodef.github.io/extra-fs/functions/open.html
+[close]: https://nodef.github.io/extra-fs/functions/close.html
+[read]: https://nodef.github.io/extra-fs/functions/read.html
+[write]: https://nodef.github.io/extra-fs/functions/write.html
+[readv]: https://nodef.github.io/extra-fs/functions/readv.html
+[writev]: https://nodef.github.io/extra-fs/functions/writev.html
+[ftruncate]: https://nodef.github.io/extra-fs/functions/ftruncate.html
+[futimes]: https://nodef.github.io/extra-fs/functions/futimes.html
+[fstat]: https://nodef.github.io/extra-fs/functions/fstat.html
+[fchmod]: https://nodef.github.io/extra-fs/functions/fchmod.html
+[fchown]: https://nodef.github.io/extra-fs/functions/fchown.html
+[link]: https://nodef.github.io/extra-fs/functions/link.html
+[symlink]: https://nodef.github.io/extra-fs/functions/symlink.html
+[readlink]: https://nodef.github.io/extra-fs/functions/readlink.html
+[realpath]: https://nodef.github.io/extra-fs/functions/realpath.html
+[lutimes]: https://nodef.github.io/extra-fs/functions/lutimes.html
+[lstat]: https://nodef.github.io/extra-fs/functions/lstat.html
+[lchown]: https://nodef.github.io/extra-fs/functions/lchown.html
+[readFile]: https://nodef.github.io/extra-fs/functions/readFile.html
+[writeFile]: https://nodef.github.io/extra-fs/functions/writeFile.html
+[appendFile]: https://nodef.github.io/extra-fs/functions/appendFile.html
+[truncate]: https://nodef.github.io/extra-fs/functions/truncate.html
+[unlink]: https://nodef.github.io/extra-fs/functions/unlink.html
+[utimes]: https://nodef.github.io/extra-fs/functions/utimes.html
+[stat]: https://nodef.github.io/extra-fs/functions/stat.html
+[copyFile]: https://nodef.github.io/extra-fs/functions/copyFile.html
+[readFileText]: https://nodef.github.io/extra-fs/functions/readFileText.html
+[writeFileText]: https://nodef.github.io/extra-fs/functions/writeFileText.html
+[readJson]: https://nodef.github.io/extra-fs/functions/readJson.html
+[writeJson]: https://nodef.github.io/extra-fs/functions/writeJson.html
+[watchFile]: https://nodef.github.io/extra-fs/functions/watchFile.html
+[unwatchFile]: https://nodef.github.io/extra-fs/functions/unwatchFile.html
+[watch]: https://nodef.github.io/extra-fs/functions/watch.html
+[createReadStream]: https://nodef.github.io/extra-fs/functions/createReadStream.html
+[createWriteStream]: https://nodef.github.io/extra-fs/functions/createWriteStream.html
+[mkdir]: https://nodef.github.io/extra-fs/functions/mkdir.html
+[mkdtemp]: https://nodef.github.io/extra-fs/functions/mkdtemp.html
+[opendir]: https://nodef.github.io/extra-fs/functions/opendir.html
+[readdir]: https://nodef.github.io/extra-fs/functions/readdir.html
+[rmdir]: https://nodef.github.io/extra-fs/functions/rmdir.html
+[dehuskdir]: https://nodef.github.io/extra-fs/functions/dehuskdir.html
+[access]: https://nodef.github.io/extra-fs/functions/access.html
+[chmod]: https://nodef.github.io/extra-fs/functions/chmod.html
+[chown]: https://nodef.github.io/extra-fs/functions/chown.html
+[rename]: https://nodef.github.io/extra-fs/functions/rename.html
+[cp]: https://nodef.github.io/extra-fs/functions/cp.html
+[rm]: https://nodef.github.io/extra-fs/functions/rm.html
+[exists]: https://nodef.github.io/extra-fs/functions/exists.html
+[assertExists]: https://nodef.github.io/extra-fs/functions/assertExists.html
+[assertNotExists]: https://nodef.github.io/extra-fs/functions/assertNotExists.html
