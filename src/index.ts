@@ -1,33 +1,36 @@
 import {EventEmitter} from "events";
-import {EOL}      from "os";
-import {join}     from "path";
-import {Dir}      from "fs";
-import {Dirent}   from "fs";
-import {PathLike} from "fs";
-import {TimeLike} from "fs";
-import {OpenMode} from "fs";
-import {Mode}     from "fs";
-import {Stats}    from "fs";
-import {BigIntStats}  from "fs";
-import {StatOptions}  from "fs";
-import {ReadPosition} from "fs";
-import {CopyOptions}  from "fs";
-import {RmOptions}    from "fs";
-import {ReadAsyncOptions} from "fs";
-import {ReadVResult}      from "fs";
-import {WriteVResult}     from "fs";
-import {NoParamCallback}  from "fs";
-import {OpenDirOptions}        from "fs";
-import {RmDirOptions}          from "fs";
-import {MakeDirectoryOptions}  from "fs";
-import {EncodingOption}        from "fs";
-import {BufferEncodingOption}  from "fs";
-import {ObjectEncodingOptions} from "fs";
-import {WriteFileOptions}      from "fs";
-import {PathOrFileDescriptor}  from "fs";
-import {constants as C}        from "fs";
+import {EOL}  from "os";
+import {join} from "path";
+import {
+  Dir,
+  Dirent,
+  PathLike,
+  TimeLike,
+  OpenMode,
+  Mode,
+  Stats,
+  BigIntStats,
+  StatOptions,
+  ReadPosition,
+  CopyOptions,
+  RmOptions,
+  ReadAsyncOptions,
+  ReadVResult,
+  WriteVResult,
+  NoParamCallback,
+  OpenDirOptions,
+  RmDirOptions,
+  MakeDirectoryOptions,
+  EncodingOption,
+  BufferEncodingOption,
+  ObjectEncodingOptions,
+  WriteFileOptions,
+  PathOrFileDescriptor,
+  constants as C,
+} from "fs";
 import * as F from "fs";
 import * as P from "fs/promises";
+
 
 
 
