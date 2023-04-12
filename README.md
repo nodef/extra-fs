@@ -80,13 +80,13 @@ included in [extra-child-process] package.
 <br>
 
 ```javascript
-const fs = require('extra-fs');
+const xfs = require('extra-fs');
 
 
 // 1. Read file text.
 async function example1() {
-  var text = fs.readFileTextSync('.npmignore');
-  var text = await fs.readFileText('.npmignore');
+  var text = xfs.readFileTextSync('.npmignore');
+  var text = await xfs.readFileText('.npmignore');
   // → # Source only
   // → .gitmodules
   // → .github/
@@ -98,8 +98,8 @@ example1();
 
 // 2. Read JSON file.
 async function example2() {
-  var json = fs.readJsonSync('package.json');
-  var json = await fs.readJson('package.json');
+  var json = xfs.readJsonSync('package.json');
+  var json = await xfs.readJson('package.json');
   // → {
   // →   name: 'extra-fs',
   // →   version: '3.0.27',
@@ -112,16 +112,16 @@ example2();
 
 // 3. Assert that a file exists.
 async function example3() {
-  if (!(await fs.exists('LICENSE'))) throw 'May I see you license sir?';
-  await fs.assertExists('LICENSE');
+  if (!(await xfs.exists('LICENSE'))) throw 'May I see you license sir?';
+  await xfs.assertExists('LICENSE');
 }
 example3();
 
 
 // 4. Get contents of a directory.
 async function example4() {
-  var contents = fs.readdirSync('src');
-  var contents = await fs.readdir('src');
+  var contents = xfs.readdirSync('src');
+  var contents = await xfs.readdir('src');
   // → [ 'index.ts' ]
 }
 example4();
