@@ -208,7 +208,7 @@ example4();
 [![](https://img.youtube.com/vi/nA3x4vVEpKc/maxresdefault.jpg)](https://www.youtube.com/watch?v=nA3x4vVEpKc)
 [![ORG](https://img.shields.io/badge/org-nodef-green?logo=Org)](https://nodef.github.io)
 [![DOI](https://zenodo.org/badge/179787900.svg)](https://zenodo.org/badge/latestdoi/179787900)
-
+![](https://ga-beacon.deno.dev/G-RC63DPBH3P:SH3Eq-NoQ9mwgYeHWxu7cw/github.com/nodef/extra-fs)
 
 [open]: https://nodef.github.io/extra-fs/functions/open.html
 [close]: https://nodef.github.io/extra-fs/functions/close.html
